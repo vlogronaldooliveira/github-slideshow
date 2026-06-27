@@ -136,6 +136,52 @@
     .intro__stage.is-active .intro__slogan span { opacity: 1; transform: none; }
 
 
+    .intro__gate {
+      position: absolute;
+      inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 32px;
+      cursor: pointer;
+      background: var(--rvr-black);
+      z-index: 2;
+      transition: opacity 600ms var(--ease), visibility 600ms var(--ease);
+    }
+    .intro__gate.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .intro__gate-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rvr-line);
+      opacity: 0;
+      animation: introGateFadeIn 1200ms var(--ease) 400ms forwards;
+    }
+    .intro__gate-cta {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(20px, 2.4vw, 28px);
+      letter-spacing: 0.02em;
+      color: var(--rvr-white);
+      padding: 16px 40px;
+      border: 1px solid var(--rvr-white);
+      background: transparent;
+      cursor: pointer;
+      min-height: 44px;
+      opacity: 0;
+      animation: introGateFadeIn 1200ms var(--ease) 700ms forwards;
+      transition: background 300ms var(--ease), color 300ms var(--ease);
+    }
+    .intro__gate-cta:hover, .intro__gate-cta:focus-visible {
+      background: var(--rvr-white); color: var(--rvr-black);
+    }
+    @keyframes introGateFadeIn {
+      to { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .intro__gate-label, .intro__gate-cta { animation: none; opacity: 1; }
+    }
+
     .intro__hint {
       position: absolute;
       bottom: 40px; left: 50%;
@@ -728,6 +774,10 @@
 
   <!-- INTRO -->
   <div class="intro" id="intro" role="dialog" aria-label="Apresentação de abertura">
+    <div class="intro__gate" id="introGate" role="button" tabindex="0" aria-label="Iniciar experiência com som">
+      <span class="intro__gate-label">Uma experiência sonora</span>
+      <span class="intro__gate-cta">Entrar</span>
+    </div>
     <div class="intro__stage" data-stage="1" aria-hidden="true"></div>
     <div class="intro__stage" data-stage="2">
       <h1 class="intro__slogan"><span>Cada projeto, uma obra excelente.</span></h1>
@@ -1052,10 +1102,14 @@
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // ---------- INTRO (scroll-driven) ----------
+      // ---------- INTRO (scroll-driven + audio gate) ----------
       var intro = document.getElementById('intro');
       var introHint = document.getElementById('introHint');
+      var introGate = document.getElementById('introGate');
       var stages = intro.querySelectorAll('.intro__stage');
+      var audioCtx = null;
+      var introStarted = false;
+      var gateFallbackTimer = null;
       var currentStage = 0;
       var introLocked = false;
       var sloganRevealTimer = null;
@@ -1087,9 +1141,68 @@
         }
       }
 
-      function startIntro() {
+      function playLuxuryAudio() {
+        try {
+          var AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          audioCtx = new AC();
+          var ctx = audioCtx;
+          var now = ctx.currentTime;
+
+          var master = ctx.createGain();
+          master.gain.setValueAtTime(0, now);
+          master.gain.linearRampToValueAtTime(0.20, now + 1.6);
+          master.gain.linearRampToValueAtTime(0.20, now + 3.8);
+          master.gain.linearRampToValueAtTime(0, now + 5.6);
+          master.connect(ctx.destination);
+
+          // Tech "power-up" lowpass filter sweep — opens warmth gradually
+          var filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.Q.value = 1.2;
+          filter.frequency.setValueAtTime(160, now);
+          filter.frequency.exponentialRampToValueAtTime(1400, now + 2.8);
+          filter.connect(master);
+
+          // C minor low cluster: sub + warm saws, with slight pitch glide on startup
+          var voices = [
+            { freq: 32.70, type: 'sine',     gain: 0.55 }, // C1 sub
+            { freq: 65.41, type: 'sawtooth', gain: 0.18 }, // C2
+            { freq: 77.78, type: 'sawtooth', gain: 0.16 }, // Eb2
+            { freq: 98.00, type: 'sawtooth', gain: 0.14 }  // G2
+          ];
+          voices.forEach(function (v) {
+            var osc = ctx.createOscillator();
+            osc.type = v.type;
+            osc.frequency.setValueAtTime(v.freq * 0.94, now);
+            osc.frequency.exponentialRampToValueAtTime(v.freq, now + 1.4);
+            var g = ctx.createGain();
+            g.gain.value = v.gain;
+            osc.connect(g).connect(filter);
+            osc.start(now);
+            osc.stop(now + 5.7);
+          });
+
+          // Subtle slow LFO on filter — gentle pulse, very EV brand feel
+          var lfo = ctx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.35;
+          var lfoGain = ctx.createGain();
+          lfoGain.gain.value = 220;
+          lfo.connect(lfoGain).connect(filter.frequency);
+          lfo.start(now + 2.8);
+          lfo.stop(now + 5.7);
+        } catch (e) { /* audio is optional */ }
+      }
+
+      function startIntro(withAudio) {
+        if (introStarted) return;
+        introStarted = true;
+        clearTimeout(gateFallbackTimer);
+        introGate.classList.add('is-hidden');
         document.body.style.overflow = 'hidden';
-        // Stage 1: black screen for ~700ms, then auto-fade-in slogan (stage 2)
+        if (withAudio) playLuxuryAudio();
+
         if (reduceMotion) {
           activateStage(1);
           introHint.classList.add('is-visible');
@@ -1097,7 +1210,6 @@
           activateStage(0);
           sloganRevealTimer = setTimeout(function () {
             if (currentStage === 0) activateStage(1);
-            // Show scroll hint shortly after slogan finishes revealing
             setTimeout(function () { introHint.classList.add('is-visible'); }, 1200);
           }, 700);
         }
@@ -1134,11 +1246,22 @@
         if (dy > 40) advanceIntro();
       });
 
-      // Defer start until DOM is ready
+      // Gate: click/keypress on the gate starts intro WITH audio.
+      // Fallback: after 8s without interaction, intro starts silently.
+      function gateActivate() { startIntro(true); }
+      introGate.addEventListener('click', gateActivate);
+      introGate.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gateActivate(); }
+      });
+      function armGateFallback() {
+        gateFallbackTimer = setTimeout(function () {
+          if (!introStarted) startIntro(false);
+        }, 8000);
+      }
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startIntro);
+        document.addEventListener('DOMContentLoaded', armGateFallback);
       } else {
-        startIntro();
+        armGateFallback();
       }
 
       // ---------- HEADER (fade out on scroll past hero) ----------
