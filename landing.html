@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RVR Projetos — Cada projeto, uma obra excelente. Arquitetura e engenharia sob o mesmo teto." />
+  <meta name="theme-color" content="#0A0A0A" />
+  <title>RVR Projetos — Cada projeto, uma obra excelente.</title>
+
+  <style>
+    :root {
+      --rvr-black: #0A0A0A;
+      --rvr-paper: #FAFAF8;
+      --rvr-white: #FFFFFF;
+      --rvr-ink: #161616;
+      --rvr-graphite: #787873;
+      --rvr-line: #D6D4CC;
+
+      --font-display: 'Marcellus', 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-body: 'Inter', 'Neue Haas Grotesk', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+
+      --ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+      --pad-x: 24px;
+      --container-max: 1440px;
+
+      --section-py: 120px;
+      --hero-py: 160px;
+    }
+
+    @media (min-width: 768px) {
+      :root { --pad-x: 48px; --section-py: 140px; --hero-py: 180px; }
+    }
+    @media (min-width: 1024px) {
+      :root { --pad-x: 80px; --section-py: 160px; --hero-py: 200px; }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--rvr-paper);
+      color: var(--rvr-ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    @media (min-width: 768px) { body { font-size: 17px; } }
+    @media (min-width: 1024px) { body { font-size: 18px; } }
+
+    img, svg, video { display: block; max-width: 100%; height: auto; }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 300ms var(--ease), opacity 300ms var(--ease);
+    }
+    a:hover, a:focus-visible { color: var(--rvr-black); }
+
+    :focus-visible {
+      outline: 2px solid var(--rvr-black);
+      outline-offset: 4px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding-left: var(--pad-x);
+      padding-right: var(--pad-x);
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 8px; top: 8px;
+      padding: 12px 16px;
+      background: var(--rvr-black);
+      color: var(--rvr-white);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transform: translateY(-200%);
+      z-index: 1000;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    /* ============ INTRO ============ */
+    .intro {
+      position: fixed; inset: 0;
+      background: var(--rvr-black);
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--rvr-white);
+      transition: opacity 800ms var(--ease), visibility 800ms var(--ease);
+    }
+    .intro[hidden] { display: none; }
+    .intro.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .intro__stage {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 700ms var(--ease);
+    }
+    .intro__stage.is-active { opacity: 1; }
+
+    .intro__slogan {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(28px, 6vw, 64px);
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 900px;
+    }
+    .intro__slogan span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 800ms var(--ease), transform 1200ms var(--ease);
+    }
+    .intro__stage.is-active .intro__slogan span { opacity: 1; transform: none; }
+
+    .intro__render {
+      width: 100%; height: 100%;
+      background-size: cover; background-position: center;
+    }
+    .intro__render--1 {
+      background-image: linear-gradient(135deg, #1c1c1a 0%, #2a2a26 50%, #14141200 100%),
+        radial-gradient(circle at 30% 70%, #3a3a35 0%, transparent 60%);
+    }
+    .intro__render--2 {
+      background-image: linear-gradient(45deg, #0f0f0e 0%, #25251f 60%, #36362f 100%),
+        radial-gradient(circle at 70% 30%, #46463d 0%, transparent 60%);
+    }
+
+    .intro__skip {
+      position: absolute;
+      bottom: 32px; right: 32px;
+      color: var(--rvr-white);
+      background: transparent;
+      border: 1px solid var(--rvr-white);
+      padding: 12px 24px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      min-height: 44px;
+      font-family: var(--font-body);
+      transition: background 300ms var(--ease), color 300ms var(--ease);
+    }
+    .intro__skip:hover, .intro__skip:focus-visible {
+      background: var(--rvr-white); color: var(--rvr-black);
+    }
+
+    /* ============ HEADER ============ */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 24px 0;
+      background: transparent;
+      transition: opacity 400ms var(--ease), transform 400ms var(--ease);
+    }
+    .site-header.is-hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav__list {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      gap: 24px;
+    }
+    .nav__list--right { justify-content: flex-end; position: relative; }
+    .nav__list--center { justify-content: center; }
+    .nav__list--left { justify-content: flex-start; }
+
+    .nav a, .nav__toggle {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--rvr-white);
+      padding: 12px 4px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+    .site-header.is-light .nav a,
+    .site-header.is-light .nav__toggle { color: var(--rvr-ink); }
+
+    .nav a:hover, .nav a:focus-visible,
+    .nav__toggle:hover, .nav__toggle:focus-visible {
+      opacity: 0.6;
+    }
+
+    .nav__submenu {
+      position: absolute;
+      top: 100%; right: 0;
+      margin-top: 8px;
+      padding: 16px 0;
+      list-style: none;
+      background: var(--rvr-black);
+      color: var(--rvr-white);
+      min-width: 220px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: opacity 300ms var(--ease), transform 300ms var(--ease), visibility 300ms var(--ease);
+    }
+    .nav__item--has-submenu:hover .nav__submenu,
+    .nav__item--has-submenu:focus-within .nav__submenu,
+    .nav__submenu.is-open {
+      opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    .nav__submenu a {
+      display: block;
+      padding: 12px 24px;
+      color: var(--rvr-white);
+      min-height: 44px;
+    }
+    .nav__submenu a:hover, .nav__submenu a:focus-visible { opacity: 0.6; }
+
+    @media (max-width: 767px) {
+      .nav {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .nav__list--left, .nav__list--center, .nav__list--right { display: none; }
+      .nav__mobile-toggle {
+        display: inline-flex;
+        font-family: var(--font-body);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--rvr-white);
+        padding: 12px 4px;
+        min-height: 44px;
+        background: transparent;
+        border: 0;
+        align-items: center;
+        cursor: pointer;
+      }
+      .site-header.is-light .nav__mobile-toggle { color: var(--rvr-ink); }
+      .nav__mobile-menu {
+        display: none;
+        position: fixed;
+        top: 64px; left: 0; right: 0; bottom: 0;
+        background: var(--rvr-black);
+        color: var(--rvr-white);
+        padding: 32px 24px;
+        overflow-y: auto;
+      }
+      .nav__mobile-menu.is-open { display: block; }
+      .nav__mobile-menu ul { list-style: none; margin: 0; padding: 0; }
+      .nav__mobile-menu li { border-bottom: 0.5px solid var(--rvr-graphite); }
+      .nav__mobile-menu a {
+        display: block;
+        padding: 20px 0;
+        color: var(--rvr-white);
+        font-size: 14px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        min-height: 44px;
+      }
+      .nav__mobile-menu .sub-list { padding-left: 16px; }
+      .nav__mobile-menu .sub-list a { font-size: 12px; padding: 14px 0; }
+    }
+    @media (min-width: 768px) {
+      .nav__mobile-toggle, .nav__mobile-menu { display: none; }
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      background: var(--rvr-black);
+      color: var(--rvr-white);
+      display: flex; align-items: center; justify-content: center;
+      padding: var(--hero-py) var(--pad-x);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(70,70,60,0.4) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(40,40,35,0.6) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero__slogan {
+      position: relative;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(40px, 9vw, 96px);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      text-align: center;
+      margin: 0;
+      max-width: 1200px;
+    }
+
+    /* ============ SECTION BASE ============ */
+    section {
+      padding-top: var(--section-py);
+      padding-bottom: var(--section-py);
+    }
+    .section-paper { background: var(--rvr-paper); color: var(--rvr-ink); }
+    .section-dark { background: var(--rvr-black); color: var(--rvr-white); }
+
+    .eyebrow {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--rvr-graphite);
+      margin: 0 0 24px 0;
+    }
+    .section-dark .eyebrow { color: var(--rvr-line); }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(32px, 5.5vw, 56px);
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      margin: 0 0 32px 0;
+      max-width: 18ch;
+    }
+
+    .section-lede {
+      font-size: clamp(16px, 1.6vw, 18px);
+      font-weight: 300;
+      line-height: 1.7;
+      max-width: 60ch;
+      margin: 0 0 64px 0;
+      color: var(--rvr-ink);
+    }
+    .section-dark .section-lede { color: var(--rvr-line); }
+
+    /* ============ GALERIA ============ */
+    .gallery__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 80px;
+    }
+    @media (min-width: 768px) {
+      .gallery__grid {
+        grid-template-columns: repeat(12, 1fr);
+        gap: 48px 32px;
+      }
+      .gallery__card:nth-child(1) { grid-column: span 7; }
+      .gallery__card:nth-child(2) { grid-column: span 5; margin-top: 80px; }
+      .gallery__card:nth-child(3) { grid-column: span 5; }
+      .gallery__card:nth-child(4) { grid-column: span 7; margin-top: 80px; }
+    }
+
+    .gallery__card { position: relative; }
+    .gallery__media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      background: var(--rvr-line);
+    }
+    .gallery__slide {
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 600ms var(--ease);
+    }
+    .gallery__slide.is-active { opacity: 1; }
+    .gallery__slide img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 600ms var(--ease);
+    }
+    .gallery__media:hover .gallery__slide.is-active img { transform: scale(1.05); }
+
+    .gallery__indicator {
+      position: absolute;
+      bottom: 16px; right: 16px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      color: var(--rvr-white);
+      mix-blend-mode: difference;
+      letter-spacing: 0.05em;
+    }
+    .gallery__nav {
+      position: absolute;
+      bottom: 16px; left: 16px;
+      display: flex; gap: 8px;
+    }
+    .gallery__nav-btn {
+      width: 44px; height: 44px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(250,250,248,0.85);
+      color: var(--rvr-ink);
+      border: 0;
+      cursor: pointer;
+      font-size: 18px;
+      font-family: var(--font-body);
+      transition: background 300ms var(--ease), color 300ms var(--ease);
+    }
+    .gallery__nav-btn:hover, .gallery__nav-btn:focus-visible {
+      background: var(--rvr-black); color: var(--rvr-white);
+    }
+    .gallery__meta {
+      margin-top: 16px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--rvr-graphite);
+      display: flex; flex-wrap: wrap; gap: 8px 16px;
+      align-items: center;
+    }
+    .gallery__meta-sep {
+      display: inline-block;
+      width: 24px; height: 0.5px;
+      background: var(--rvr-line);
+    }
+    .gallery__step-label {
+      margin-top: 8px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--rvr-graphite);
+    }
+
+    /* ============ DESEMPENHO ============ */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 64px;
+    }
+    @media (min-width: 768px) {
+      .stats { grid-template-columns: repeat(2, 1fr); gap: 80px; }
+    }
+    @media (min-width: 1024px) {
+      .stats { grid-template-columns: repeat(4, 1fr); gap: 48px; }
+    }
+
+    .stat__media {
+      width: 100%;
+      aspect-ratio: 4/5;
+      background: linear-gradient(180deg, #1a1a18 0%, #2a2a26 100%);
+      margin-bottom: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    .stat__media::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,0.02) 12px 24px);
+    }
+
+    .stat__number {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(72px, 12vw, 140px);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px 0;
+      color: var(--rvr-white);
+    }
+    .stat__label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--rvr-line);
+      margin: 0;
+    }
+
+    .stats__quote {
+      margin: 96px 0 0 0;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.4;
+      max-width: 32ch;
+      color: var(--rvr-white);
+    }
+
+    /* ============ SOBRE ============ */
+    .about__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    @media (min-width: 1024px) {
+      .about__grid { grid-template-columns: 5fr 7fr; gap: 80px; align-items: start; }
+    }
+    .about__body p {
+      font-size: clamp(16px, 1.6vw, 18px);
+      line-height: 1.7;
+      margin: 0 0 24px 0;
+      max-width: 60ch;
+    }
+
+    /* ============ SERVIÇOS ============ */
+    .services__list {
+      list-style: none;
+      margin: 0; padding: 0;
+      border-top: 0.5px solid var(--rvr-line);
+    }
+    .services__item {
+      padding: 32px 0;
+      border-bottom: 0.5px solid var(--rvr-line);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 768px) {
+      .services__item {
+        grid-template-columns: 1fr 2fr;
+        gap: 48px;
+        padding: 40px 0;
+        align-items: baseline;
+      }
+    }
+    .services__name {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(22px, 2.6vw, 28px);
+      margin: 0;
+      line-height: 1.3;
+    }
+    .services__desc {
+      font-size: clamp(15px, 1.4vw, 17px);
+      color: var(--rvr-graphite);
+      line-height: 1.6;
+    }
+
+    /* ============ DEPOIMENTOS ============ */
+    .testimonials__list {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 64px;
+    }
+    @media (min-width: 768px) {
+      .testimonials__list { grid-template-columns: repeat(2, 1fr); gap: 64px 48px; }
+    }
+    .testimonial blockquote {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(22px, 2.4vw, 28px);
+      line-height: 1.4;
+      max-width: 36ch;
+    }
+    .testimonial cite {
+      display: block;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 0.5px solid var(--rvr-line);
+      font-style: normal;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--rvr-graphite);
+    }
+
+    /* ============ CTA ============ */
+    .cta {
+      padding-top: var(--hero-py);
+      padding-bottom: var(--hero-py);
+      text-align: left;
+    }
+    .cta__title {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(32px, 6vw, 64px);
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      margin: 0 0 32px 0;
+      max-width: 22ch;
+    }
+    .cta__subtitle {
+      font-size: clamp(16px, 1.6vw, 18px);
+      line-height: 1.7;
+      max-width: 50ch;
+      margin: 0 0 48px 0;
+      color: var(--rvr-line);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      min-height: 44px;
+      padding: 16px 32px;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--rvr-white);
+      border: 1px solid var(--rvr-white);
+      cursor: pointer;
+      transition: background 300ms var(--ease), color 300ms var(--ease);
+    }
+    .btn:hover, .btn:focus-visible {
+      background: var(--rvr-white); color: var(--rvr-black);
+    }
+    .btn--invert {
+      color: var(--rvr-black); border-color: var(--rvr-black);
+    }
+    .btn--invert:hover, .btn--invert:focus-visible {
+      background: var(--rvr-black); color: var(--rvr-white);
+    }
+
+    /* ============ FOOTER ============ */
+    .site-footer {
+      background: var(--rvr-black);
+      color: var(--rvr-line);
+      padding: 96px 0 32px 0;
+    }
+    .footer__tagline {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(20px, 2.4vw, 28px);
+      line-height: 1.4;
+      max-width: 22ch;
+      margin: 0 0 64px 0;
+      color: var(--rvr-white);
+    }
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding-bottom: 64px;
+      border-bottom: 0.5px solid var(--rvr-graphite);
+    }
+    @media (min-width: 768px) {
+      .footer__grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    }
+    .footer__col h2 {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--rvr-graphite);
+      margin: 0 0 24px 0;
+    }
+    .footer__col ul { list-style: none; padding: 0; margin: 0; }
+    .footer__col li { margin-bottom: 12px; }
+    .footer__col a, .footer__col p {
+      color: var(--rvr-white);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 8px 0;
+      display: inline-block;
+      min-height: 24px;
+    }
+    .footer__col a {
+      padding: 4px 0;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .footer__col a:hover, .footer__col a:focus-visible { opacity: 0.6; }
+
+    .footer__bottom {
+      padding-top: 32px;
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--rvr-graphite);
+    }
+
+    /* ============ ANIMATIONS — reveal on scroll ============ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 800ms var(--ease), transform 800ms var(--ease);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ============ REDUCED MOTION ============ */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+      .intro__slogan span { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+  <!-- INTRO -->
+  <div class="intro" id="intro" role="dialog" aria-label="Apresentação de abertura">
+    <div class="intro__stage" data-stage="1" aria-hidden="true"></div>
+    <div class="intro__stage" data-stage="2">
+      <h1 class="intro__slogan"><span>Cada projeto, uma obra excelente.</span></h1>
+    </div>
+    <div class="intro__stage" data-stage="3" aria-hidden="true">
+      <div class="intro__render intro__render--1" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
+    </div>
+    <div class="intro__stage" data-stage="4" aria-hidden="true">
+      <div class="intro__render intro__render--2" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
+    </div>
+    <button type="button" class="intro__skip" id="introSkip" aria-label="Pular abertura">Pular</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="site-header" id="siteHeader" role="banner">
+    <div class="container">
+      <nav class="nav" aria-label="Navegação principal">
+        <ul class="nav__list nav__list--left">
+          <li><a href="#sobre">Sobre</a></li>
+        </ul>
+        <ul class="nav__list nav__list--center">
+          <li><a href="#projetos">Projetos</a></li>
+        </ul>
+        <ul class="nav__list nav__list--right">
+          <li class="nav__item--has-submenu">
+            <button type="button" class="nav__toggle" id="servicosToggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicosMenu">Serviços</button>
+            <ul class="nav__submenu" id="servicosMenu" role="menu" aria-label="Submenu Serviços">
+              <li role="none"><a href="#servicos" role="menuitem">Arquitetura</a></li>
+              <li role="none"><a href="#servicos" role="menuitem">Engenharia civil</a></li>
+              <li role="none"><a href="#servicos" role="menuitem">Edifícios</a></li>
+              <li role="none"><a href="#servicos" role="menuitem">Casas</a></li>
+            </ul>
+          </li>
+        </ul>
+        <button type="button" class="nav__mobile-toggle" id="mobileToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Abrir menu">Menu</button>
+      </nav>
+      <div class="nav__mobile-menu" id="mobileMenu" hidden>
+        <ul>
+          <li><a href="#sobre" data-nav-close>Sobre</a></li>
+          <li><a href="#projetos" data-nav-close>Projetos</a></li>
+          <li>
+            <a href="#servicos" data-nav-close>Serviços</a>
+            <ul class="sub-list">
+              <li><a href="#servicos" data-nav-close>Arquitetura</a></li>
+              <li><a href="#servicos" data-nav-close>Engenharia civil</a></li>
+              <li><a href="#servicos" data-nav-close>Edifícios</a></li>
+              <li><a href="#servicos" data-nav-close>Casas</a></li>
+            </ul>
+          </li>
+          <li><a href="#contato" data-nav-close>Contato</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero" id="hero" aria-label="Apresentação">
+      <h1 class="hero__slogan">Cada projeto, uma obra excelente.</h1>
+    </section>
+
+    <!-- GALERIA DE PROJETOS -->
+    <section class="section-paper" id="projetos" aria-labelledby="projetos-title">
+      <div class="container">
+        <p class="eyebrow reveal">Portfólio RVR</p>
+        <h2 class="section-title reveal" id="projetos-title">Obras que carregam nossa assinatura</h2>
+        <p class="section-lede reveal">Por trás de cada render, um projeto técnico completo. Deslize para ver as plantas de cada obra.</p>
+
+        <div class="gallery__grid">
+          <!-- Card 1 -->
+          <article class="gallery__card reveal" data-project>
+            <div class="gallery__media" data-slider>
+              <div class="gallery__slide is-active"><img alt="Render do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23d6d4cc'/%3E%3Cstop offset='1' stop-color='%23787873'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23g1)'/%3E%3Crect x='180' y='220' width='440' height='280' fill='%230a0a0a' opacity='0.85'/%3E%3Crect x='260' y='320' width='80' height='180' fill='%23fafaf8' opacity='0.9'/%3E%3Crect x='400' y='280' width='160' height='60' fill='%23fafaf8' opacity='0.7'/%3E%3Crect x='400' y='360' width='160' height='60' fill='%23fafaf8' opacity='0.6'/%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta baixa do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='400' y1='120' x2='400' y2='480'/%3E%3Cline x1='120' y1='300' x2='680' y2='300'/%3E%3Cline x1='250' y1='300' x2='250' y2='480'/%3E%3Cline x1='550' y1='120' x2='550' y2='300'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta estrutural do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='120' y='120' width='20' height='20'/%3E%3Crect x='280' y='120' width='20' height='20'/%3E%3Crect x='440' y='120' width='20' height='20'/%3E%3Crect x='600' y='120' width='20' height='20'/%3E%3Crect x='120' y='280' width='20' height='20'/%3E%3Crect x='280' y='280' width='20' height='20'/%3E%3Crect x='440' y='280' width='20' height='20'/%3E%3Crect x='600' y='280' width='20' height='20'/%3E%3Crect x='120' y='440' width='20' height='20'/%3E%3Crect x='280' y='440' width='20' height='20'/%3E%3Crect x='440' y='440' width='20' height='20'/%3E%3Crect x='600' y='440' width='20' height='20'/%3E%3C/g%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='500' height='340'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta elétrica do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='120' y1='300' x2='680' y2='300' stroke-dasharray='4 4'/%3E%3Ccircle cx='250' cy='220' r='8'/%3E%3Ccircle cx='400' cy='220' r='8'/%3E%3Ccircle cx='550' cy='220' r='8'/%3E%3Ccircle cx='250' cy='380' r='8'/%3E%3Ccircle cx='400' cy='380' r='8'/%3E%3Ccircle cx='550' cy='380' r='8'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta hidráulica do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 200 L300 200 L300 350 L500 350 L500 200 L680 200'/%3E%3Cpath d='M120 420 L680 420'/%3E%3Ccircle cx='300' cy='200' r='4' fill='%230a0a0a'/%3E%3Ccircle cx='500' cy='350' r='4' fill='%230a0a0a'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta de esgoto do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 350 L250 350 L250 450 L550 450 L550 350 L680 350' stroke-dasharray='8 4'/%3E%3Ccircle cx='250' cy='350' r='6'/%3E%3Ccircle cx='550' cy='450' r='6'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
+              <div class="gallery__nav">
+                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
+                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
+              </div>
+            </div>
+            <div class="gallery__step-label" data-step-label>Render</div>
+            <div class="gallery__meta">
+              <span>Residencial</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Nome do projeto</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Localização</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Ano</span>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="gallery__card reveal" data-project>
+            <div class="gallery__media" data-slider>
+              <div class="gallery__slide is-active"><img alt="Render do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3ClinearGradient id='g2' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23787873'/%3E%3Cstop offset='1' stop-color='%23d6d4cc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23g2)'/%3E%3Crect x='220' y='140' width='360' height='400' fill='%23161616'/%3E%3Cg fill='%23fafaf8' opacity='0.8'%3E%3Crect x='250' y='180' width='80' height='40'/%3E%3Crect x='360' y='180' width='80' height='40'/%3E%3Crect x='470' y='180' width='80' height='40'/%3E%3Crect x='250' y='250' width='80' height='40'/%3E%3Crect x='360' y='250' width='80' height='40'/%3E%3Crect x='470' y='250' width='80' height='40'/%3E%3Crect x='250' y='320' width='80' height='40'/%3E%3Crect x='360' y='320' width='80' height='40'/%3E%3Crect x='470' y='320' width='80' height='40'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta baixa do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='280' y1='120' x2='280' y2='480'/%3E%3Cline x1='520' y1='120' x2='520' y2='480'/%3E%3Cline x1='120' y1='300' x2='680' y2='300'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta estrutural do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='120' y='120' width='24' height='24'/%3E%3Crect x='340' y='120' width='24' height='24'/%3E%3Crect x='560' y='120' width='24' height='24'/%3E%3Crect x='120' y='340' width='24' height='24'/%3E%3Crect x='340' y='340' width='24' height='24'/%3E%3Crect x='560' y='340' width='24' height='24'/%3E%3C/g%3E%3Crect x='120' y='120' width='464' height='244' stroke='%230a0a0a' stroke-width='1' fill='none'/%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta elétrica do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 300 L680 300' stroke-dasharray='3 5'/%3E%3Ccircle cx='200' cy='200' r='6'/%3E%3Ccircle cx='400' cy='200' r='6'/%3E%3Ccircle cx='600' cy='200' r='6'/%3E%3Ccircle cx='200' cy='400' r='6'/%3E%3Ccircle cx='400' cy='400' r='6'/%3E%3Ccircle cx='600' cy='400' r='6'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta hidráulica do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 250 L400 250 L400 400 L680 400'/%3E%3Ccircle cx='400' cy='250' r='5' fill='%230a0a0a'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta de esgoto do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 400 L300 400 L300 300 L500 300 L500 400 L680 400' stroke-dasharray='8 4'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
+              <div class="gallery__nav">
+                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
+                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
+              </div>
+            </div>
+            <div class="gallery__step-label" data-step-label>Render</div>
+            <div class="gallery__meta">
+              <span>Comercial</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Nome do projeto</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Localização</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Ano</span>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="gallery__card reveal" data-project>
+            <div class="gallery__media" data-slider>
+              <div class="gallery__slide is-active"><img alt="Render do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23d6d4cc'/%3E%3Crect x='120' y='400' width='560' height='160' fill='%23787873'/%3E%3Crect x='200' y='200' width='400' height='40' fill='%230a0a0a'/%3E%3Crect x='210' y='240' width='20' height='160' fill='%230a0a0a'/%3E%3Crect x='570' y='240' width='20' height='160' fill='%230a0a0a'/%3E%3Crect x='350' y='340' width='100' height='60' fill='%23fafaf8'/%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta baixa do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Crect x='300' y='250' width='200' height='100'/%3E%3Ccircle cx='200' cy='300' r='20'/%3E%3Ccircle cx='600' cy='300' r='20'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta estrutural do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='180' y='180' width='28' height='28'/%3E%3Crect x='600' y='180' width='28' height='28'/%3E%3Crect x='180' y='400' width='28' height='28'/%3E%3Crect x='600' y='400' width='28' height='28'/%3E%3C/g%3E%3Crect x='180' y='180' width='448' height='248' stroke='%230a0a0a' stroke-width='1' fill='none'/%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta elétrica do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='400' y1='120' x2='400' y2='480' stroke-dasharray='4 4'/%3E%3Ccircle cx='300' cy='250' r='10'/%3E%3Ccircle cx='500' cy='250' r='10'/%3E%3Ccircle cx='300' cy='400' r='10'/%3E%3Ccircle cx='500' cy='400' r='10'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta hidráulica do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 300 L680 300'/%3E%3Cpath d='M400 120 L400 480'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta de esgoto do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none' stroke-dasharray='8 4'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 450 L680 450'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
+              <div class="gallery__nav">
+                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
+                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
+              </div>
+            </div>
+            <div class="gallery__step-label" data-step-label>Render</div>
+            <div class="gallery__meta">
+              <span>Posto de combustível</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Nome do projeto</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Localização</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Ano</span>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="gallery__card reveal" data-project>
+            <div class="gallery__media" data-slider>
+              <div class="gallery__slide is-active"><img alt="Render do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3ClinearGradient id='g4' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23d6d4cc'/%3E%3Cstop offset='1' stop-color='%23787873'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23g4)'/%3E%3Crect x='300' y='80' width='200' height='480' fill='%230a0a0a'/%3E%3Cg fill='%23fafaf8' opacity='0.85'%3E%3Crect x='320' y='110' width='30' height='40'/%3E%3Crect x='370' y='110' width='30' height='40'/%3E%3Crect x='420' y='110' width='30' height='40'/%3E%3Crect x='470' y='110' width='30' height='40'/%3E%3Crect x='320' y='170' width='30' height='40'/%3E%3Crect x='370' y='170' width='30' height='40'/%3E%3Crect x='420' y='170' width='30' height='40'/%3E%3Crect x='470' y='170' width='30' height='40'/%3E%3Crect x='320' y='230' width='30' height='40'/%3E%3Crect x='370' y='230' width='30' height='40'/%3E%3Crect x='420' y='230' width='30' height='40'/%3E%3Crect x='470' y='230' width='30' height='40'/%3E%3Crect x='320' y='290' width='30' height='40'/%3E%3Crect x='370' y='290' width='30' height='40'/%3E%3Crect x='420' y='290' width='30' height='40'/%3E%3Crect x='470' y='290' width='30' height='40'/%3E%3Crect x='320' y='350' width='30' height='40'/%3E%3Crect x='370' y='350' width='30' height='40'/%3E%3Crect x='420' y='350' width='30' height='40'/%3E%3Crect x='470' y='350' width='30' height='40'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta baixa do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cline x1='400' y1='100' x2='400' y2='500'/%3E%3Cline x1='200' y1='300' x2='600' y2='300'/%3E%3Cline x1='300' y1='100' x2='300' y2='300'/%3E%3Cline x1='500' y1='300' x2='500' y2='500'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta estrutural do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='180' y='100' width='30' height='30'/%3E%3Crect x='390' y='100' width='30' height='30'/%3E%3Crect x='600' y='100' width='30' height='30'/%3E%3Crect x='180' y='280' width='30' height='30'/%3E%3Crect x='390' y='280' width='30' height='30'/%3E%3Crect x='600' y='280' width='30' height='30'/%3E%3Crect x='180' y='470' width='30' height='30'/%3E%3Crect x='390' y='470' width='30' height='30'/%3E%3Crect x='600' y='470' width='30' height='30'/%3E%3C/g%3E%3Crect x='180' y='100' width='450' height='400' stroke='%230a0a0a' stroke-width='1' fill='none'/%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta elétrica do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cline x1='200' y1='300' x2='600' y2='300' stroke-dasharray='4 4'/%3E%3Ccircle cx='280' cy='200' r='8'/%3E%3Ccircle cx='400' cy='200' r='8'/%3E%3Ccircle cx='520' cy='200' r='8'/%3E%3Ccircle cx='280' cy='400' r='8'/%3E%3Ccircle cx='400' cy='400' r='8'/%3E%3Ccircle cx='520' cy='400' r='8'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta hidráulica do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cpath d='M200 200 L400 200 L400 400 L600 400'/%3E%3Cpath d='M400 100 L400 500'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__slide"><img alt="Planta de esgoto do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none' stroke-dasharray='8 4'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cpath d='M200 450 L600 450'/%3E%3Cpath d='M400 100 L400 500'/%3E%3C/g%3E%3C/svg%3E" /></div>
+              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
+              <div class="gallery__nav">
+                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
+                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
+              </div>
+            </div>
+            <div class="gallery__step-label" data-step-label>Render</div>
+            <div class="gallery__meta">
+              <span>Edifício</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Nome do projeto</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Localização</span>
+              <span class="gallery__meta-sep" aria-hidden="true"></span>
+              <span>Ano</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESEMPENHO -->
+    <section class="section-dark" id="desempenho" aria-labelledby="desempenho-title">
+      <div class="container">
+        <p class="eyebrow reveal">Excelência, em números</p>
+        <h2 class="section-title reveal" id="desempenho-title">Nosso desempenho em movimento</h2>
+        <p class="section-lede reveal">Cada número aqui representa obras reais, entregues com o mesmo padrão de excelência.</p>
+
+        <div class="stats">
+          <div class="stat reveal">
+            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo de projetos desenvolvidos"></div>
+            <p class="stat__number" data-counter data-target="126" data-suffix="">0</p>
+            <p class="stat__label">Projetos desenvolvidos</p>
+          </div>
+          <div class="stat reveal">
+            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo de clientes atendidos"></div>
+            <p class="stat__number" data-counter data-target="50" data-suffix="">0</p>
+            <p class="stat__label">Clientes atendidos</p>
+          </div>
+          <div class="stat reveal">
+            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo do ano de atividade"></div>
+            <p class="stat__number" data-counter data-target="1" data-suffix="">0</p>
+            <p class="stat__label">Ano de atividade</p>
+          </div>
+          <div class="stat reveal">
+            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo da satisfação dos clientes"></div>
+            <p class="stat__number" data-counter data-target="100" data-suffix="%">0%</p>
+            <p class="stat__label">Satisfação dos clientes</p>
+          </div>
+        </div>
+
+        <p class="stats__quote reveal">Não contamos quantos projetos fizemos. Contamos quantos foram, de fato, excelentes.</p>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section-paper" id="sobre" aria-labelledby="sobre-title">
+      <div class="container">
+        <div class="about__grid">
+          <div>
+            <p class="eyebrow reveal">Sobre</p>
+            <h2 class="section-title reveal" id="sobre-title">Arquitetura e engenharia com o mesmo padrão</h2>
+          </div>
+          <div class="about__body reveal">
+            <p>A RVR Projetos nasceu de uma convicção simples: um bom projeto só existe quando arquitetura e engenharia caminham juntas, desde o primeiro esboço até a última demão de tinta.</p>
+            <p>É por isso que projetamos e construímos sob o mesmo teto. Cada decisão — de estrutura, material, prazo ou custo — é tomada com um único critério em mente: a obra precisa ser excelente, não apenas pronta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="section-paper" id="servicos" aria-labelledby="servicos-title" style="padding-top: 0;">
+      <div class="container">
+        <p class="eyebrow reveal">Serviços</p>
+        <h2 class="section-title reveal" id="servicos-title">Do terreno à obra excelente</h2>
+
+        <ul class="services__list reveal">
+          <li class="services__item">
+            <h3 class="services__name">Projeto arquitetônico</h3>
+            <p class="services__desc">concepção, anteprojeto e executivo</p>
+          </li>
+          <li class="services__item">
+            <h3 class="services__name">Projeto estrutural e complementares</h3>
+            <p class="services__desc">engenharia integrada desde o início</p>
+          </li>
+          <li class="services__item">
+            <h3 class="services__name">Gerenciamento de obra</h3>
+            <p class="services__desc">acompanhamento técnico e cronograma</p>
+          </li>
+          <li class="services__item">
+            <h3 class="services__name">Construção</h3>
+            <p class="services__desc">execução completa, do alicerce ao acabamento</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section class="section-paper" id="depoimentos" aria-labelledby="depoimentos-title">
+      <div class="container">
+        <p class="eyebrow reveal">Excelência reconhecida</p>
+        <h2 class="visually-hidden" id="depoimentos-title">Depoimentos</h2>
+
+        <ul class="testimonials__list">
+          <li class="testimonial reveal">
+            <blockquote>"Texto do depoimento do cliente — uma ou duas frases sobre a experiência com a RVR."</blockquote>
+            <cite>— Nome do cliente, Nome do projeto</cite>
+          </li>
+          <li class="testimonial reveal">
+            <blockquote>"Texto do depoimento do cliente — uma ou duas frases sobre a experiência com a RVR."</blockquote>
+            <cite>— Nome do cliente, Nome do projeto</cite>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section-dark cta" id="contato" aria-labelledby="cta-title">
+      <div class="container">
+        <h2 class="cta__title reveal" id="cta-title">O seu projeto também pode ser uma obra excelente.</h2>
+        <p class="cta__subtitle reveal">Conte para a gente o que você tem em mente — um terreno, um programa ou só uma ideia ainda sem forma.</p>
+        <div class="reveal">
+          <a class="btn" href="mailto:contato@rvrprojetos.com.br">Falar com a RVR</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p class="footer__tagline">RVR Projetos — Cada projeto, uma obra excelente.</p>
+
+      <div class="footer__grid">
+        <div class="footer__col">
+          <h2>Contato</h2>
+          <ul>
+            <li><a href="mailto:contato@rvrprojetos.com.br">E-mail: contato@rvrprojetos.com.br</a></li>
+            <li><a href="tel:+550000000000">WhatsApp: (00) 00000-0000</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h2>Navegação</h2>
+          <ul>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#projetos">Projetos</a></li>
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#contato">Contato</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h2>Redes</h2>
+          <ul>
+            <li><a href="#" rel="noopener" aria-label="Instagram da RVR Projetos">Instagram</a></li>
+            <li><a href="#" rel="noopener" aria-label="LinkedIn da RVR Projetos">LinkedIn</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer__bottom">© 2026 RVR Projetos. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ---------- INTRO ----------
+      var intro = document.getElementById('intro');
+      var introSkip = document.getElementById('introSkip');
+      var stages = intro.querySelectorAll('.intro__stage');
+      var stageDelays = reduceMotion ? [0, 400, 800, 1200, 1600] : [0, 1000, 3000, 4400, 5800];
+      var timers = [];
+
+      function activateStage(idx) {
+        stages.forEach(function (s, i) {
+          s.classList.toggle('is-active', i === idx);
+        });
+      }
+
+      function endIntro() {
+        timers.forEach(clearTimeout);
+        intro.classList.add('is-done');
+        setTimeout(function () {
+          intro.setAttribute('hidden', '');
+          document.body.style.overflow = '';
+        }, 800);
+      }
+
+      function startIntro() {
+        document.body.style.overflow = 'hidden';
+        stageDelays.forEach(function (delay, i) {
+          if (i === stageDelays.length - 1) {
+            timers.push(setTimeout(endIntro, delay));
+          } else {
+            timers.push(setTimeout(function () { activateStage(i); }, delay));
+          }
+        });
+      }
+
+      introSkip.addEventListener('click', endIntro);
+      intro.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+          e.preventDefault();
+          endIntro();
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !intro.hasAttribute('hidden')) endIntro();
+      });
+
+      // Defer start until DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startIntro);
+      } else {
+        startIntro();
+      }
+
+      // ---------- HEADER (fade out on scroll past hero) ----------
+      var header = document.getElementById('siteHeader');
+      var hero = document.getElementById('hero');
+      var lastY = 0;
+
+      function onScroll() {
+        var y = window.scrollY || window.pageYOffset;
+        var heroBottom = hero.offsetTop + hero.offsetHeight;
+
+        if (y > 80) {
+          header.classList.add('is-hidden');
+        } else {
+          header.classList.remove('is-hidden');
+        }
+
+        if (y > heroBottom - 100) {
+          header.classList.add('is-light');
+        } else {
+          header.classList.remove('is-light');
+        }
+        lastY = y;
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // ---------- HEADER: submenu (desktop) ----------
+      var servicosToggle = document.getElementById('servicosToggle');
+      var servicosMenu = document.getElementById('servicosMenu');
+      servicosToggle.addEventListener('click', function () {
+        var open = servicosMenu.classList.toggle('is-open');
+        servicosToggle.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('click', function (e) {
+        if (!servicosToggle.contains(e.target) && !servicosMenu.contains(e.target)) {
+          servicosMenu.classList.remove('is-open');
+          servicosToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // ---------- HEADER: mobile menu ----------
+      var mobileToggle = document.getElementById('mobileToggle');
+      var mobileMenu = document.getElementById('mobileMenu');
+      mobileToggle.addEventListener('click', function () {
+        var open = mobileMenu.classList.toggle('is-open');
+        mobileToggle.setAttribute('aria-expanded', String(open));
+        mobileToggle.textContent = open ? 'Fechar' : 'Menu';
+        if (open) { mobileMenu.removeAttribute('hidden'); }
+        else { mobileMenu.setAttribute('hidden', ''); }
+      });
+      mobileMenu.querySelectorAll('[data-nav-close]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          mobileMenu.classList.remove('is-open');
+          mobileMenu.setAttribute('hidden', '');
+          mobileToggle.setAttribute('aria-expanded', 'false');
+          mobileToggle.textContent = 'Menu';
+        });
+      });
+
+      // ---------- GALERIA: slider per card ----------
+      var stepLabels = ['Render', 'Planta baixa', 'Planta estrutural', 'Planta elétrica', 'Planta hidráulica', 'Planta de esgoto'];
+
+      document.querySelectorAll('[data-project]').forEach(function (card) {
+        var slider = card.querySelector('[data-slider]');
+        var slides = slider.querySelectorAll('.gallery__slide');
+        var current = slider.querySelector('[data-current]');
+        var total = slider.querySelector('[data-total]');
+        var prevBtn = slider.querySelector('[data-prev]');
+        var nextBtn = slider.querySelector('[data-next]');
+        var stepLabelEl = card.querySelector('[data-step-label]');
+        var index = 0;
+        total.textContent = String(slides.length);
+
+        function go(to) {
+          index = (to + slides.length) % slides.length;
+          slides.forEach(function (s, i) { s.classList.toggle('is-active', i === index); });
+          current.textContent = String(index + 1);
+          if (stepLabelEl) stepLabelEl.textContent = stepLabels[index] || '';
+        }
+
+        prevBtn.addEventListener('click', function () { go(index - 1); });
+        nextBtn.addEventListener('click', function () { go(index + 1); });
+
+        // Keyboard nav within slider
+        slider.setAttribute('tabindex', '0');
+        slider.setAttribute('role', 'group');
+        slider.setAttribute('aria-roledescription', 'carrossel de plantas');
+        slider.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
+          else if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); }
+        });
+
+        // Touch swipe
+        var startX = 0;
+        slider.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+        slider.addEventListener('touchend', function (e) {
+          var dx = e.changedTouches[0].clientX - startX;
+          if (Math.abs(dx) > 40) go(dx < 0 ? index + 1 : index - 1);
+        });
+      });
+
+      // ---------- REVEAL ON SCROLL ----------
+      var revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.05, rootMargin: '0px 0px -10% 0px' });
+        revealEls.forEach(function (el) { io.observe(el); });
+        // Safety fallback: ensure everything reveals within 4s no matter what
+        setTimeout(function () {
+          revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+        }, 4000);
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+
+      // ---------- COUNTERS ----------
+      function animateCounter(el) {
+        var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        var suffix = el.getAttribute('data-suffix') || '';
+        if (reduceMotion) { el.textContent = target + suffix; return; }
+        var duration = 2000;
+        var start = performance.now();
+        function tick(now) {
+          var t = Math.min(1, (now - start) / duration);
+          // ease-in-out cubic-bezier approximation
+          var eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          var value = Math.round(target * eased);
+          el.textContent = value + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+          else el.textContent = target + suffix;
+        }
+        requestAnimationFrame(tick);
+      }
+
+      if ('IntersectionObserver' in window) {
+        var counterIO = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              animateCounter(entry.target);
+              counterIO.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('[data-counter]').forEach(function (el) { counterIO.observe(el); });
+      } else {
+        document.querySelectorAll('[data-counter]').forEach(animateCounter);
+      }
+    })();
+  </script>
+</body>
+</html>
