@@ -148,6 +148,37 @@
         radial-gradient(circle at 70% 30%, #46463d 0%, transparent 60%);
     }
 
+    .intro__hint {
+      position: absolute;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      color: var(--rvr-line);
+      font-family: var(--font-body);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 600ms var(--ease);
+      pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .intro__hint.is-visible { opacity: 0.7; }
+    .intro__hint::after {
+      content: '';
+      width: 1px; height: 32px;
+      background: var(--rvr-line);
+      animation: introHintLine 1800ms var(--ease) infinite;
+    }
+    @keyframes introHintLine {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .intro__hint::after { animation: none; }
+    }
+
     .intro__skip {
       position: absolute;
       bottom: 32px; right: 32px;
@@ -738,6 +769,7 @@
     <div class="intro__stage" data-stage="4" aria-hidden="true">
       <div class="intro__render intro__render--2" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
     </div>
+    <div class="intro__hint" id="introHint" aria-hidden="true">Role para continuar</div>
     <button type="button" class="intro__skip" id="introSkip" aria-label="Pular abertura">Pular</button>
   </div>
 
@@ -1058,21 +1090,24 @@
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // ---------- INTRO ----------
+      // ---------- INTRO (scroll-driven) ----------
       var intro = document.getElementById('intro');
       var introSkip = document.getElementById('introSkip');
+      var introHint = document.getElementById('introHint');
       var stages = intro.querySelectorAll('.intro__stage');
-      var stageDelays = reduceMotion ? [0, 400, 800, 1200, 1600] : [0, 1000, 3000, 4400, 5800];
-      var timers = [];
+      var currentStage = 0;
+      var introLocked = false;
+      var sloganRevealTimer = null;
 
       function activateStage(idx) {
+        currentStage = idx;
         stages.forEach(function (s, i) {
           s.classList.toggle('is-active', i === idx);
         });
       }
 
       function endIntro() {
-        timers.forEach(clearTimeout);
+        if (intro.hasAttribute('hidden')) return;
         intro.classList.add('is-done');
         setTimeout(function () {
           intro.setAttribute('hidden', '');
@@ -1080,26 +1115,64 @@
         }, 800);
       }
 
+      function advanceIntro() {
+        if (introLocked || intro.hasAttribute('hidden')) return;
+        if (currentStage < stages.length - 1) {
+          introLocked = true;
+          activateStage(currentStage + 1);
+          setTimeout(function () { introLocked = false; }, 700);
+        } else {
+          endIntro();
+        }
+      }
+
       function startIntro() {
         document.body.style.overflow = 'hidden';
-        stageDelays.forEach(function (delay, i) {
-          if (i === stageDelays.length - 1) {
-            timers.push(setTimeout(endIntro, delay));
-          } else {
-            timers.push(setTimeout(function () { activateStage(i); }, delay));
-          }
-        });
+        // Stage 1: black screen for ~700ms, then auto-fade-in slogan (stage 2)
+        if (reduceMotion) {
+          activateStage(1);
+          introHint.classList.add('is-visible');
+        } else {
+          activateStage(0);
+          sloganRevealTimer = setTimeout(function () {
+            if (currentStage === 0) activateStage(1);
+            // Show scroll hint shortly after slogan finishes revealing
+            setTimeout(function () { introHint.classList.add('is-visible'); }, 1200);
+          }, 700);
+        }
       }
 
       introSkip.addEventListener('click', endIntro);
-      intro.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+
+      // Wheel: advance stage by stage (debounced)
+      intro.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        if (e.deltaY > 0) advanceIntro();
+      }, { passive: false });
+
+      // Keyboard: arrow down / space / page down advance; Esc / Enter skip
+      document.addEventListener('keydown', function (e) {
+        if (intro.hasAttribute('hidden')) return;
+        if (e.key === 'Escape' || e.key === 'Enter') {
           e.preventDefault();
           endIntro();
+        } else if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+          e.preventDefault();
+          advanceIntro();
         }
       });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !intro.hasAttribute('hidden')) endIntro();
+
+      // Touch swipe up advances
+      var touchStartY = 0;
+      intro.addEventListener('touchstart', function (e) {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      intro.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+      }, { passive: false });
+      intro.addEventListener('touchend', function (e) {
+        var dy = touchStartY - e.changedTouches[0].clientY;
+        if (dy > 40) advanceIntro();
       });
 
       // Defer start until DOM is ready
