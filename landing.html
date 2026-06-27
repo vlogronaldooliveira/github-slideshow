@@ -135,36 +135,6 @@
     }
     .intro__stage.is-active .intro__slogan span { opacity: 1; transform: none; }
 
-    .intro__word {
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(48px, 12vw, 140px);
-      line-height: 1.1;
-      letter-spacing: 0.02em;
-      text-align: center;
-      margin: 0;
-      padding: 0 24px;
-    }
-    .intro__word span {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 800ms var(--ease), transform 1200ms var(--ease);
-    }
-    .intro__stage.is-active .intro__word span { opacity: 1; transform: none; }
-
-    .intro__render {
-      width: 100%; height: 100%;
-      background-size: cover; background-position: center;
-    }
-    .intro__render--1 {
-      background-image: linear-gradient(135deg, #1c1c1a 0%, #2a2a26 50%, #14141200 100%),
-        radial-gradient(circle at 30% 70%, #3a3a35 0%, transparent 60%);
-    }
-    .intro__render--2 {
-      background-image: linear-gradient(45deg, #0f0f0e 0%, #25251f 60%, #36362f 100%),
-        radial-gradient(circle at 70% 30%, #46463d 0%, transparent 60%);
-    }
 
     .intro__hint {
       position: absolute;
@@ -762,15 +732,6 @@
     <div class="intro__stage" data-stage="2">
       <h1 class="intro__slogan"><span>Cada projeto, uma obra excelente.</span></h1>
     </div>
-    <div class="intro__stage" data-stage="3">
-      <h2 class="intro__word"><span>Portfólio</span></h2>
-    </div>
-    <div class="intro__stage" data-stage="4" aria-hidden="true">
-      <div class="intro__render intro__render--1" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
-    </div>
-    <div class="intro__stage" data-stage="5" aria-hidden="true">
-      <div class="intro__render intro__render--2" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
-    </div>
     <div class="intro__hint" id="introHint" aria-hidden="true">Role para continuar</div>
   </div>
 
@@ -819,8 +780,8 @@
   <main id="main">
 
     <!-- HERO -->
-    <section class="hero" id="hero" aria-label="Apresentação">
-      <h1 class="hero__slogan">Cada projeto, uma obra excelente.</h1>
+    <section class="hero" id="hero" aria-label="Portfólio">
+      <h1 class="hero__slogan">Portfólio</h1>
     </section>
 
     <!-- GALERIA DE PROJETOS -->
