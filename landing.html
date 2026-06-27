@@ -148,20 +148,12 @@
       transition: opacity 600ms var(--ease), visibility 600ms var(--ease);
     }
     .intro__gate.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .intro__gate-label {
-      font-family: var(--font-body);
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--rvr-line);
-      opacity: 0;
-      animation: introGateFadeIn 1200ms var(--ease) 400ms forwards;
-    }
     .intro__gate-cta {
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-weight: 400;
-      font-size: clamp(20px, 2.4vw, 28px);
-      letter-spacing: 0.02em;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
       color: var(--rvr-white);
       padding: 16px 40px;
       border: 1px solid var(--rvr-white);
@@ -169,7 +161,7 @@
       cursor: pointer;
       min-height: 44px;
       opacity: 0;
-      animation: introGateFadeIn 1200ms var(--ease) 700ms forwards;
+      animation: introGateFadeIn 1200ms var(--ease) 400ms forwards;
       transition: background 300ms var(--ease), color 300ms var(--ease);
     }
     .intro__gate-cta:hover, .intro__gate-cta:focus-visible {
@@ -179,7 +171,7 @@
       to { opacity: 1; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .intro__gate-label, .intro__gate-cta { animation: none; opacity: 1; }
+      .intro__gate-cta { animation: none; opacity: 1; }
     }
 
     .intro__hint {
@@ -774,9 +766,8 @@
 
   <!-- INTRO -->
   <div class="intro" id="intro" role="dialog" aria-label="Apresentação de abertura">
-    <div class="intro__gate" id="introGate" role="button" tabindex="0" aria-label="Iniciar experiência com som">
-      <span class="intro__gate-label">Uma experiência sonora</span>
-      <span class="intro__gate-cta">Entrar</span>
+    <div class="intro__gate" id="introGate">
+      <button type="button" class="intro__gate-cta" id="introGateBtn" aria-label="Entrar na experiência com som">Entrar</button>
     </div>
     <div class="intro__stage" data-stage="1" aria-hidden="true"></div>
     <div class="intro__stage" data-stage="2">
@@ -1106,10 +1097,11 @@
       var intro = document.getElementById('intro');
       var introHint = document.getElementById('introHint');
       var introGate = document.getElementById('introGate');
+      var introGateBtn = document.getElementById('introGateBtn');
       var stages = intro.querySelectorAll('.intro__stage');
       var audioCtx = null;
       var introStarted = false;
-      var gateFallbackTimer = null;
+      var audioPlayed = false;
       var currentStage = 0;
       var introLocked = false;
       var sloganRevealTimer = null;
@@ -1195,14 +1187,18 @@
         } catch (e) { /* audio is optional */ }
       }
 
-      function startIntro(withAudio) {
+      function tryPlayAudio() {
+        if (audioPlayed) return;
+        audioPlayed = true;
+        playLuxuryAudio();
+      }
+
+      function startIntro() {
         if (introStarted) return;
         introStarted = true;
-        clearTimeout(gateFallbackTimer);
         introGate.classList.add('is-hidden');
         document.body.style.overflow = 'hidden';
-        if (withAudio) playLuxuryAudio();
-
+        tryPlayAudio();
         if (reduceMotion) {
           activateStage(1);
           introHint.classList.add('is-visible');
@@ -1246,23 +1242,8 @@
         if (dy > 40) advanceIntro();
       });
 
-      // Gate: click/keypress on the gate starts intro WITH audio.
-      // Fallback: after 8s without interaction, intro starts silently.
-      function gateActivate() { startIntro(true); }
-      introGate.addEventListener('click', gateActivate);
-      introGate.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gateActivate(); }
-      });
-      function armGateFallback() {
-        gateFallbackTimer = setTimeout(function () {
-          if (!introStarted) startIntro(false);
-        }, 8000);
-      }
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', armGateFallback);
-      } else {
-        armGateFallback();
-      }
+      // Gate: clicking "Entrar" starts the intro with audio in sync
+      introGateBtn.addEventListener('click', startIntro);
 
       // ---------- HEADER (fade out on scroll past hero) ----------
       var header = document.getElementById('siteHeader');
