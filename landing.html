@@ -179,25 +179,6 @@
       .intro__hint::after { animation: none; }
     }
 
-    .intro__skip {
-      position: absolute;
-      bottom: 32px; right: 32px;
-      color: var(--rvr-white);
-      background: transparent;
-      border: 1px solid var(--rvr-white);
-      padding: 12px 24px;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      cursor: pointer;
-      min-height: 44px;
-      font-family: var(--font-body);
-      transition: background 300ms var(--ease), color 300ms var(--ease);
-    }
-    .intro__skip:hover, .intro__skip:focus-visible {
-      background: var(--rvr-white); color: var(--rvr-black);
-    }
-
     /* ============ HEADER ============ */
     .site-header {
       position: fixed; top: 0; left: 0; right: 0;
@@ -770,7 +751,6 @@
       <div class="intro__render intro__render--2" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
     </div>
     <div class="intro__hint" id="introHint" aria-hidden="true">Role para continuar</div>
-    <button type="button" class="intro__skip" id="introSkip" aria-label="Pular abertura">Pular</button>
   </div>
 
   <!-- HEADER -->
@@ -1092,7 +1072,6 @@
 
       // ---------- INTRO (scroll-driven) ----------
       var intro = document.getElementById('intro');
-      var introSkip = document.getElementById('introSkip');
       var introHint = document.getElementById('introHint');
       var stages = intro.querySelectorAll('.intro__stage');
       var currentStage = 0;
@@ -1141,8 +1120,6 @@
           }, 700);
         }
       }
-
-      introSkip.addEventListener('click', endIntro);
 
       // Wheel: advance stage by stage (debounced)
       intro.addEventListener('wheel', function (e) {
