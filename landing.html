@@ -704,8 +704,8 @@
 <body>
   <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
-  <!-- SCROLL-DRIVEN BACKGROUND VIDEO (covers whole page) -->
-  <video class="bg-video" id="bgVideo" muted playsinline preload="auto" aria-hidden="true">
+  <!-- BACKGROUND VIDEO — autoplay, loops as the main screen -->
+  <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
     <source src="assets/scroll-bg.mp4" type="video/mp4" />
   </video>
   <div class="bg-video__tint" aria-hidden="true"></div>
@@ -1028,119 +1028,50 @@
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // ---------- SCROLL-DRIVEN BACKGROUND VIDEO + HERO CHOREOGRAPHY ----------
+      // ---------- VIDEO + DOCK CHOREOGRAPHY ----------
+      // Video autoplays as the main screen. Scroll only controls when it
+      // docks to the right (entering "part 2") and the section overlays.
       var bgVideo = document.getElementById('bgVideo');
       var heroEl = document.getElementById('hero');
-      var heroSlogan = heroEl ? heroEl.querySelector('.hero__slogan') : null;
       var spacerEl = document.querySelector('.video-spacer');
-      var videoReady = false;
-      var videoTicking = false;
+      var ticking = false;
 
-      // Targets driving the choreography
-      var VIDEO_TIME_AT_PART2 = 3; // seconds — when entering gallery
-      var COLLAPSED_SCALE = 0.50;  // final video size on the right (50% of viewport — preserves 4K detail)
-      var COLLAPSED_OFFSET_X = -32; // pixel inset from right edge when collapsed
-
-      if (bgVideo) {
-        bgVideo.addEventListener('loadedmetadata', function () {
-          videoReady = true;
-          try { bgVideo.pause(); } catch (e) {}
-          scheduleVideoUpdate();
-        });
-        bgVideo.load();
-      }
+      var COLLAPSED_SCALE = 0.50;
+      var COLLAPSED_OFFSET_X = -32;
 
       function applyVideoTransform(t) {
-        // t in [0,1]: 0 = fullscreen, 1 = collapsed to right
         if (!bgVideo) return;
         var scale = 1 - (1 - COLLAPSED_SCALE) * t;
         var translateX = COLLAPSED_OFFSET_X * t;
         bgVideo.style.transform = 'translateX(' + translateX + 'px) scale(' + scale + ')';
       }
 
-      function updateBgVideoTime() {
-        videoTicking = false;
-
-        // Mobile fallback (no fancy choreography on small screens)
+      function updateLayout() {
+        ticking = false;
+        // Mobile: video always fullscreen, no dock
         if (window.innerWidth < 1024) {
-          var doc = document.documentElement;
-          var maxScrollM = (doc.scrollHeight - doc.clientHeight) || 1;
-          var pM = Math.max(0, Math.min(1, (window.scrollY || 0) / maxScrollM));
-          if (heroSlogan) heroSlogan.style.opacity = Math.max(0, 1 - pM * 4);
           applyVideoTransform(0);
           document.body.classList.remove('video-collapsed');
-          if (videoReady && bgVideo && isFinite(bgVideo.duration)) {
-            var targetM = bgVideo.duration * pM;
-            if (Math.abs(bgVideo.currentTime - targetM) > 0.01) {
-              try { bgVideo.currentTime = targetM; } catch (e) {}
-            }
-          }
           return;
         }
-
-        // Desktop choreography
         var y = window.scrollY || 0;
         var heroH = heroEl ? heroEl.offsetHeight : window.innerHeight;
         var spacerH = spacerEl ? spacerEl.offsetHeight : window.innerHeight * 2;
-        var heroEnd = heroH;
-        var spacerEnd = heroEnd + spacerH;
-        var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-
-        var sloganOpacity = 1;
-        var transformT = 0;
-        var phaseProgress = 0; // 0..1 within the active phase
-
-        if (y <= heroEnd) {
-          // Phase A — fullscreen, video frame 0
-          sloganOpacity = 1;
-          transformT = 0;
-        } else if (y <= spacerEnd) {
-          // Phase B — fullscreen, video plays 0 → 3s, Portfolio fades
-          var p = (y - heroEnd) / Math.max(1, spacerH);
-          phaseProgress = p;
-          var fadeP = Math.max(0, Math.min(1, p / 0.4));
-          sloganOpacity = 1 - fadeP;
-          transformT = 0; // stays fullscreen during the whole spacer
-        } else {
-          // Phase C — at 3s mark: collapse to right (CSS transition handles
-          // the smooth dock animation), then keep scrubbing through the rest
-          sloganOpacity = 0;
-          transformT = 1;
-          var post = (y - spacerEnd) / Math.max(1, (maxScroll - spacerEnd));
-          phaseProgress = Math.max(0, Math.min(1, post));
-        }
-
-        // Visual updates (don't depend on video readiness)
-        if (heroSlogan) heroSlogan.style.opacity = sloganOpacity;
-        applyVideoTransform(transformT);
-        document.body.classList.toggle('video-collapsed', transformT > 0.5);
-
-        // Video time scrubbing (only if video can be played)
-        if (videoReady && bgVideo && isFinite(bgVideo.duration)) {
-          var capForVideo = Math.min(bgVideo.duration, VIDEO_TIME_AT_PART2);
-          var targetTime;
-          if (y <= heroEnd) {
-            targetTime = 0;
-          } else if (y <= spacerEnd) {
-            targetTime = capForVideo * phaseProgress;
-          } else {
-            targetTime = VIDEO_TIME_AT_PART2 + (bgVideo.duration - VIDEO_TIME_AT_PART2) * phaseProgress;
-          }
-          if (Math.abs(bgVideo.currentTime - targetTime) > 0.01) {
-            try { bgVideo.currentTime = targetTime; } catch (e) {}
-          }
-        }
+        var spacerEnd = heroH + spacerH;
+        var collapsed = y > spacerEnd;
+        applyVideoTransform(collapsed ? 1 : 0);
+        document.body.classList.toggle('video-collapsed', collapsed);
       }
 
-      function scheduleVideoUpdate() {
-        if (!videoTicking) {
-          requestAnimationFrame(updateBgVideoTime);
-          videoTicking = true;
+      function scheduleLayout() {
+        if (!ticking) {
+          requestAnimationFrame(updateLayout);
+          ticking = true;
         }
       }
-      window.addEventListener('scroll', scheduleVideoUpdate, { passive: true });
-      window.addEventListener('resize', scheduleVideoUpdate, { passive: true });
-      scheduleVideoUpdate();
+      window.addEventListener('scroll', scheduleLayout, { passive: true });
+      window.addEventListener('resize', scheduleLayout, { passive: true });
+      scheduleLayout();
 
       // ---------- HEADER (fade out on scroll past hero) ----------
       var header = document.getElementById('siteHeader');
