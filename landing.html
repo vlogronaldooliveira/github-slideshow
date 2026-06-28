@@ -135,36 +135,36 @@
     }
     .intro__stage.is-active .intro__slogan span { opacity: 1; transform: none; }
 
-    .intro__render {
-      width: 100%; height: 100%;
-      background-size: cover; background-position: center;
-    }
-    .intro__render--1 {
-      background-image: linear-gradient(135deg, #1c1c1a 0%, #2a2a26 50%, #14141200 100%),
-        radial-gradient(circle at 30% 70%, #3a3a35 0%, transparent 60%);
-    }
-    .intro__render--2 {
-      background-image: linear-gradient(45deg, #0f0f0e 0%, #25251f 60%, #36362f 100%),
-        radial-gradient(circle at 70% 30%, #46463d 0%, transparent 60%);
-    }
 
-    .intro__skip {
+    .intro__hint {
       position: absolute;
-      bottom: 32px; right: 32px;
-      color: var(--rvr-white);
-      background: transparent;
-      border: 1px solid var(--rvr-white);
-      padding: 12px 24px;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      color: var(--rvr-line);
+      font-family: var(--font-body);
       font-size: 11px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      cursor: pointer;
-      min-height: 44px;
-      font-family: var(--font-body);
-      transition: background 300ms var(--ease), color 300ms var(--ease);
+      opacity: 0;
+      transition: opacity 600ms var(--ease);
+      pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
     }
-    .intro__skip:hover, .intro__skip:focus-visible {
-      background: var(--rvr-white); color: var(--rvr-black);
+    .intro__hint.is-visible { opacity: 0.7; }
+    .intro__hint::after {
+      content: '';
+      width: 1px; height: 32px;
+      background: var(--rvr-line);
+      animation: introHintLine 1800ms var(--ease) infinite;
+    }
+    @keyframes introHintLine {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .intro__hint::after { animation: none; }
     }
 
     /* ============ HEADER ============ */
@@ -306,17 +306,26 @@
       display: flex; align-items: center; justify-content: center;
       padding: var(--hero-py) var(--pad-x);
       overflow: hidden;
+      isolation: isolate;
+    }
+    .hero__video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
     }
     .hero::before {
       content: '';
       position: absolute; inset: 0;
+      z-index: 1;
       background:
-        radial-gradient(circle at 20% 80%, rgba(70,70,60,0.4) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(40,40,35,0.6) 0%, transparent 50%);
+        linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.35) 50%, rgba(10,10,10,0.75) 100%);
       pointer-events: none;
     }
     .hero__slogan {
       position: relative;
+      z-index: 2;
       font-family: var(--font-display);
       font-weight: 400;
       font-size: clamp(40px, 9vw, 96px);
@@ -732,13 +741,7 @@
     <div class="intro__stage" data-stage="2">
       <h1 class="intro__slogan"><span>Cada projeto, uma obra excelente.</span></h1>
     </div>
-    <div class="intro__stage" data-stage="3" aria-hidden="true">
-      <div class="intro__render intro__render--1" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
-    </div>
-    <div class="intro__stage" data-stage="4" aria-hidden="true">
-      <div class="intro__render intro__render--2" role="img" aria-label="Render arquitetônico de projeto RVR"></div>
-    </div>
-    <button type="button" class="intro__skip" id="introSkip" aria-label="Pular abertura">Pular</button>
+    <div class="intro__hint" id="introHint" aria-hidden="true">Role para continuar</div>
   </div>
 
   <!-- HEADER -->
@@ -786,8 +789,11 @@
   <main id="main">
 
     <!-- HERO -->
-    <section class="hero" id="hero" aria-label="Apresentação">
-      <h1 class="hero__slogan">Cada projeto, uma obra excelente.</h1>
+    <section class="hero" id="hero" aria-label="Portfólio">
+      <video class="hero__video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <source src="assets/hero.mp4" type="video/mp4" />
+      </video>
+      <h1 class="hero__slogan">Portfólio</h1>
     </section>
 
     <!-- GALERIA DE PROJETOS -->
@@ -1058,21 +1064,23 @@
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // ---------- INTRO ----------
+      // ---------- INTRO (scroll-driven) ----------
       var intro = document.getElementById('intro');
-      var introSkip = document.getElementById('introSkip');
+      var introHint = document.getElementById('introHint');
       var stages = intro.querySelectorAll('.intro__stage');
-      var stageDelays = reduceMotion ? [0, 400, 800, 1200, 1600] : [0, 1000, 3000, 4400, 5800];
-      var timers = [];
+      var currentStage = 0;
+      var introLocked = false;
+      var sloganRevealTimer = null;
 
       function activateStage(idx) {
+        currentStage = idx;
         stages.forEach(function (s, i) {
           s.classList.toggle('is-active', i === idx);
         });
       }
 
       function endIntro() {
-        timers.forEach(clearTimeout);
+        if (intro.hasAttribute('hidden')) return;
         intro.classList.add('is-done');
         setTimeout(function () {
           intro.setAttribute('hidden', '');
@@ -1080,26 +1088,62 @@
         }, 800);
       }
 
-      function startIntro() {
-        document.body.style.overflow = 'hidden';
-        stageDelays.forEach(function (delay, i) {
-          if (i === stageDelays.length - 1) {
-            timers.push(setTimeout(endIntro, delay));
-          } else {
-            timers.push(setTimeout(function () { activateStage(i); }, delay));
-          }
-        });
-      }
-
-      introSkip.addEventListener('click', endIntro);
-      intro.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
-          e.preventDefault();
+      function advanceIntro() {
+        if (introLocked || intro.hasAttribute('hidden')) return;
+        if (currentStage < stages.length - 1) {
+          introLocked = true;
+          activateStage(currentStage + 1);
+          setTimeout(function () { introLocked = false; }, 700);
+        } else {
           endIntro();
         }
-      });
+      }
+
+      function startIntro() {
+        document.body.style.overflow = 'hidden';
+        // Stage 1: black screen for ~700ms, then auto-fade-in slogan (stage 2)
+        if (reduceMotion) {
+          activateStage(1);
+          introHint.classList.add('is-visible');
+        } else {
+          activateStage(0);
+          sloganRevealTimer = setTimeout(function () {
+            if (currentStage === 0) activateStage(1);
+            // Show scroll hint shortly after slogan finishes revealing
+            setTimeout(function () { introHint.classList.add('is-visible'); }, 1200);
+          }, 700);
+        }
+      }
+
+      // Wheel: advance stage by stage (debounced)
+      intro.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        if (e.deltaY > 0) advanceIntro();
+      }, { passive: false });
+
+      // Keyboard: arrow down / space / page down advance; Esc / Enter skip
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !intro.hasAttribute('hidden')) endIntro();
+        if (intro.hasAttribute('hidden')) return;
+        if (e.key === 'Escape' || e.key === 'Enter') {
+          e.preventDefault();
+          endIntro();
+        } else if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+          e.preventDefault();
+          advanceIntro();
+        }
+      });
+
+      // Touch swipe up advances
+      var touchStartY = 0;
+      intro.addEventListener('touchstart', function (e) {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+      intro.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+      }, { passive: false });
+      intro.addEventListener('touchend', function (e) {
+        var dy = touchStartY - e.changedTouches[0].clientY;
+        if (dy > 40) advanceIntro();
       });
 
       // Defer start until DOM is ready
