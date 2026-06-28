@@ -299,18 +299,30 @@
 
     /* ============ SCROLL-DRIVEN BACKGROUND VIDEO ============ */
     .bg-video {
-      position: fixed; inset: 0;
+      position: fixed;
+      top: 0; left: 0;
       width: 100vw; height: 100vh;
       object-fit: cover;
       z-index: -2;
       pointer-events: none;
       background: var(--rvr-black);
+      transform-origin: 100% 50%;
+      will-change: transform;
     }
     .bg-video__tint {
       position: fixed; inset: 0;
       z-index: -1;
       background: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.55) 100%);
       pointer-events: none;
+      transition: opacity 400ms var(--ease);
+    }
+    /* When video collapses to side, dim the global tint so it doesn't darken
+       the area where content now sits in the open. */
+    body.video-collapsed .bg-video__tint { opacity: 0; }
+
+    /* Content gets right padding when video docks to the right (desktop only) */
+    @media (min-width: 1024px) {
+      body.video-collapsed .container { padding-right: calc(34vw + 64px); }
     }
 
     /* All sections render over the fixed video. Default to dark cinematic
@@ -326,12 +338,15 @@
       min-height: 100vh;
       background: transparent;
       color: var(--rvr-white);
-      display: flex; align-items: center; justify-content: center;
       padding: var(--hero-py) var(--pad-x);
-      overflow: hidden;
+      overflow: visible;
     }
+    /* Slogan is fixed centered so it persists across the hero and into the
+       spacer; JS fades it out as the user scrolls past the hero. */
     .hero__slogan {
-      position: relative;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
       font-family: var(--font-display);
       font-weight: 400;
       font-size: clamp(40px, 9vw, 96px);
@@ -341,6 +356,9 @@
       margin: 0;
       max-width: 1200px;
       text-shadow: 0 2px 24px rgba(0,0,0,0.4);
+      z-index: 5;
+      pointer-events: none;
+      will-change: opacity;
     }
 
     /* ============ SECTION BASE ============ */
@@ -348,10 +366,10 @@
       padding-top: var(--section-py);
       padding-bottom: var(--section-py);
     }
-    /* Transparent spacer between hero and gallery — gives the video room
-       to play through its zoom-in shot uninterrupted by content. */
+    /* Transparent spacer between hero and gallery — Portfolio fades out
+       here and the video advances to ~3s before content (part 2) appears. */
     .video-spacer {
-      height: 120vh;
+      height: 200vh;
       background: transparent;
       pointer-events: none;
     }
@@ -1184,45 +1202,115 @@
         startIntro();
       }
 
-      // ---------- SCROLL-DRIVEN BACKGROUND VIDEO ----------
+      // ---------- SCROLL-DRIVEN BACKGROUND VIDEO + HERO CHOREOGRAPHY ----------
       var bgVideo = document.getElementById('bgVideo');
+      var heroEl = document.getElementById('hero');
+      var heroSlogan = heroEl ? heroEl.querySelector('.hero__slogan') : null;
+      var spacerEl = document.querySelector('.video-spacer');
       var videoReady = false;
       var videoTicking = false;
 
+      // Targets driving the choreography
+      var VIDEO_TIME_AT_PART2 = 3; // seconds — when entering gallery
+      var COLLAPSED_SCALE = 0.32;  // final video size on the right (≈32% of viewport)
+      var COLLAPSED_OFFSET_X = -32; // pixel inset from right edge when collapsed
+
       if (bgVideo) {
-        // Prime the video so currentTime scrubbing is responsive
         bgVideo.addEventListener('loadedmetadata', function () {
           videoReady = true;
           try { bgVideo.pause(); } catch (e) {}
-          updateBgVideoTime();
+          scheduleVideoUpdate();
         });
         bgVideo.load();
       }
 
-      function updateBgVideoTime() {
-        if (!videoReady || !bgVideo || !bgVideo.duration || !isFinite(bgVideo.duration)) {
-          videoTicking = false;
-          return;
-        }
-        var doc = document.documentElement;
-        var maxScroll = (doc.scrollHeight - doc.clientHeight) || 1;
-        var progress = Math.max(0, Math.min(1, (window.scrollY || doc.scrollTop || 0) / maxScroll));
-        var target = bgVideo.duration * progress;
-        // Avoid setting currentTime to the same value (cheap guard)
-        if (Math.abs(bgVideo.currentTime - target) > 0.01) {
-          try { bgVideo.currentTime = target; } catch (e) {}
-        }
-        videoTicking = false;
+      function applyVideoTransform(t) {
+        // t in [0,1]: 0 = fullscreen, 1 = collapsed to right
+        if (!bgVideo) return;
+        var scale = 1 - (1 - COLLAPSED_SCALE) * t;
+        var translateX = COLLAPSED_OFFSET_X * t;
+        bgVideo.style.transform = 'translateX(' + translateX + 'px) scale(' + scale + ')';
       }
 
-      function onScrollForVideo() {
+      function updateBgVideoTime() {
+        videoTicking = false;
+
+        // Mobile fallback (no fancy choreography on small screens)
+        if (window.innerWidth < 1024) {
+          var doc = document.documentElement;
+          var maxScrollM = (doc.scrollHeight - doc.clientHeight) || 1;
+          var pM = Math.max(0, Math.min(1, (window.scrollY || 0) / maxScrollM));
+          if (heroSlogan) heroSlogan.style.opacity = Math.max(0, 1 - pM * 4);
+          applyVideoTransform(0);
+          document.body.classList.remove('video-collapsed');
+          if (videoReady && bgVideo && isFinite(bgVideo.duration)) {
+            var targetM = bgVideo.duration * pM;
+            if (Math.abs(bgVideo.currentTime - targetM) > 0.01) {
+              try { bgVideo.currentTime = targetM; } catch (e) {}
+            }
+          }
+          return;
+        }
+
+        // Desktop choreography
+        var y = window.scrollY || 0;
+        var heroH = heroEl ? heroEl.offsetHeight : window.innerHeight;
+        var spacerH = spacerEl ? spacerEl.offsetHeight : window.innerHeight * 2;
+        var heroEnd = heroH;
+        var spacerEnd = heroEnd + spacerH;
+        var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+        var sloganOpacity = 1;
+        var transformT = 0;
+        var phaseProgress = 0; // 0..1 within the active phase
+
+        if (y <= heroEnd) {
+          sloganOpacity = 1;
+          transformT = 0;
+        } else if (y <= spacerEnd) {
+          var p = (y - heroEnd) / Math.max(1, spacerH);
+          phaseProgress = p;
+          var fadeP = Math.max(0, Math.min(1, p / 0.4));
+          sloganOpacity = 1 - fadeP;
+          transformT = Math.max(0, Math.min(1, (p - 0.65) / 0.35));
+        } else {
+          sloganOpacity = 0;
+          transformT = 1;
+          var post = (y - spacerEnd) / Math.max(1, (maxScroll - spacerEnd));
+          phaseProgress = Math.max(0, Math.min(1, post));
+        }
+
+        // Visual updates (don't depend on video readiness)
+        if (heroSlogan) heroSlogan.style.opacity = sloganOpacity;
+        applyVideoTransform(transformT);
+        document.body.classList.toggle('video-collapsed', transformT > 0.5);
+
+        // Video time scrubbing (only if video can be played)
+        if (videoReady && bgVideo && isFinite(bgVideo.duration)) {
+          var capForVideo = Math.min(bgVideo.duration, VIDEO_TIME_AT_PART2);
+          var targetTime;
+          if (y <= heroEnd) {
+            targetTime = 0;
+          } else if (y <= spacerEnd) {
+            targetTime = capForVideo * phaseProgress;
+          } else {
+            targetTime = VIDEO_TIME_AT_PART2 + (bgVideo.duration - VIDEO_TIME_AT_PART2) * phaseProgress;
+          }
+          if (Math.abs(bgVideo.currentTime - targetTime) > 0.01) {
+            try { bgVideo.currentTime = targetTime; } catch (e) {}
+          }
+        }
+      }
+
+      function scheduleVideoUpdate() {
         if (!videoTicking) {
           requestAnimationFrame(updateBgVideoTime);
           videoTicking = true;
         }
       }
-      window.addEventListener('scroll', onScrollForVideo, { passive: true });
-      window.addEventListener('resize', onScrollForVideo, { passive: true });
+      window.addEventListener('scroll', scheduleVideoUpdate, { passive: true });
+      window.addEventListener('resize', scheduleVideoUpdate, { passive: true });
+      scheduleVideoUpdate();
 
       // ---------- HEADER (fade out on scroll past hero) ----------
       var header = document.getElementById('siteHeader');
