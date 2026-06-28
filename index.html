@@ -1,13 +1,947 @@
----
-layout: presentation
----
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RVR Projetos — Estúdio de arquitetura e engenharia. Projetos residenciais, comerciais e institucionais." />
+  <meta name="theme-color" content="#F4EFE7" />
+  <title>RVR Projetos — Estúdio de arquitetura</title>
 
-{% for post in site.posts reversed %}
-	{% include slide.html %}
-	<div class="page-break"></div>
-{% endfor %}
-{% unless site.simple-slideshow %}
-{% if site.overview %}
-<section id="overview" class="step" {% for attr in site.overview-data %} data-{{attr[0]}}="{{attr[1]}}"{% endfor %}></section>
-{% endif %}
-{% endunless %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --paper: #F4EFE7;
+      --paper-dim: #ECE6DA;
+      --ink: #141414;
+      --ink-soft: #3A372F;
+      --rule: #C8C1B0;
+      --mute: #807866;
+      --accent: #8B5A2B;
+
+      --serif: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+      --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+      --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+      --pad-x: 24px;
+      --gutter: 24px;
+      --max: 1380px;
+    }
+
+    @media (min-width: 720px) { :root { --pad-x: 48px; --gutter: 32px; } }
+    @media (min-width: 1100px) { :root { --pad-x: 80px; --gutter: 48px; } }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    @media (min-width: 720px) { body { font-size: 17px; } }
+
+    img, svg { display: block; max-width: 100%; height: auto; }
+
+    a { color: inherit; text-decoration: none; transition: opacity 240ms var(--ease); }
+    a:hover, a:focus-visible { opacity: 0.55; }
+    :focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding-left: var(--pad-x);
+      padding-right: var(--pad-x);
+    }
+
+    .skip-link {
+      position: absolute; left: 8px; top: 8px;
+      padding: 10px 14px;
+      background: var(--ink); color: var(--paper);
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      transform: translateY(-200%);
+      z-index: 100;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    /* ========= HEADER ========= */
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--paper);
+      border-bottom: 0.5px solid transparent;
+      transition: border-color 240ms var(--ease);
+    }
+    .top.is-scrolled { border-bottom-color: var(--rule); }
+    .top__row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      padding: 20px 0;
+      gap: 24px;
+    }
+    .brand {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+    .brand small {
+      display: block;
+      font-family: var(--sans);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-top: 4px;
+    }
+    .top__nav {
+      justify-self: end;
+      display: none;
+      gap: 32px;
+    }
+    @media (min-width: 900px) { .top__nav { display: flex; } }
+    .top__nav a {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 8px 0;
+    }
+    .top__menu {
+      justify-self: end;
+      display: inline-flex;
+      align-items: center; gap: 10px;
+      background: transparent;
+      border: 0;
+      padding: 12px 0;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    @media (min-width: 900px) { .top__menu { display: none; } }
+    .top__menu span {
+      width: 22px; height: 1px; background: var(--ink);
+      position: relative;
+      transition: transform 240ms var(--ease);
+    }
+    .top__menu span::after {
+      content: ''; position: absolute; left: 0; top: 6px;
+      width: 22px; height: 1px; background: var(--ink);
+      transition: transform 240ms var(--ease);
+    }
+
+    .drawer {
+      position: fixed;
+      inset: 0;
+      background: var(--paper);
+      padding: 96px var(--pad-x) 48px;
+      display: none;
+      z-index: 35;
+      overflow-y: auto;
+    }
+    .drawer.is-open { display: block; }
+    .drawer ul { list-style: none; padding: 0; margin: 0; }
+    .drawer li { border-top: 0.5px solid var(--rule); }
+    .drawer li:last-child { border-bottom: 0.5px solid var(--rule); }
+    .drawer a {
+      display: block;
+      padding: 24px 0;
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    /* ========= HERO / MANIFESTO ========= */
+    .hero {
+      padding: 80px 0 120px;
+    }
+    @media (min-width: 720px) { .hero { padding: 120px 0 160px; } }
+    @media (min-width: 1100px) { .hero { padding: 160px 0 200px; } }
+
+    .hero__eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin: 0 0 32px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero__eyebrow::before {
+      content: '';
+      width: 56px; height: 0.5px; background: var(--ink);
+    }
+
+    .hero__statement {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(42px, 9vw, 132px);
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin: 0 0 48px 0;
+      max-width: 14ch;
+    }
+    .hero__statement em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ink-soft);
+    }
+
+    .hero__meta {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      max-width: 880px;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 0.5px solid var(--rule);
+    }
+    @media (min-width: 720px) {
+      .hero__meta { grid-template-columns: 1fr 2fr; gap: 64px; }
+    }
+    .hero__meta dt {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-bottom: 12px;
+    }
+    .hero__meta dd {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.45;
+      font-weight: 400;
+    }
+
+    /* ========= SECTION HEAD ========= */
+    .section {
+      padding: 80px 0;
+    }
+    @media (min-width: 720px) { .section { padding: 112px 0; } }
+    @media (min-width: 1100px) { .section { padding: 144px 0; } }
+
+    .section + .section { padding-top: 0; }
+
+    .head {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 64px;
+      align-items: baseline;
+    }
+    @media (min-width: 900px) {
+      .head { grid-template-columns: 1fr 2fr; gap: 64px; }
+    }
+    .head__index {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mute);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .head__index::before {
+      content: '';
+      width: 32px; height: 0.5px; background: var(--ink);
+    }
+    .head__title {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      margin: 0;
+      max-width: 20ch;
+    }
+
+    /* ========= PROJETOS (Editorial spreads) ========= */
+    .projects { display: flex; flex-direction: column; gap: 96px; }
+    @media (min-width: 720px) { .projects { gap: 144px; } }
+
+    .project {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: end;
+    }
+    @media (min-width: 900px) {
+      .project { grid-template-columns: 7fr 5fr; gap: var(--gutter); align-items: end; }
+      .project--reverse { grid-template-columns: 5fr 7fr; }
+      .project--reverse .project__media { order: 2; }
+      .project--reverse .project__info { order: 1; }
+    }
+
+    .project__media {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      background: var(--paper-dim);
+    }
+    @media (min-width: 900px) {
+      .project--wide .project__media { aspect-ratio: 5/4; }
+    }
+    .project__media img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 1200ms var(--ease);
+    }
+    .project:hover .project__media img { transform: scale(1.03); }
+
+    .project__media-tag {
+      position: absolute;
+      top: 16px; left: 16px;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--paper);
+      background: var(--ink);
+      padding: 8px 12px;
+    }
+
+    .project__info { padding-bottom: 8px; }
+    .project__cat {
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin: 0 0 20px 0;
+    }
+    .project__name {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(28px, 3.6vw, 44px);
+      line-height: 1.1;
+      letter-spacing: 0.005em;
+      margin: 0 0 24px 0;
+    }
+    .project__name em {
+      font-style: italic;
+      font-weight: 300;
+    }
+    .project__desc {
+      font-size: clamp(15px, 1.4vw, 16px);
+      line-height: 1.7;
+      max-width: 42ch;
+      color: var(--ink-soft);
+      margin: 0 0 32px 0;
+    }
+    .project__facts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 24px;
+      padding-top: 24px;
+      border-top: 0.5px solid var(--rule);
+    }
+    .project__facts dt {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin: 0 0 6px 0;
+    }
+    .project__facts dd {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+
+    /* ========= ESTÚDIO ========= */
+    .studio { background: var(--paper-dim); }
+    .studio__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    @media (min-width: 900px) {
+      .studio__grid { grid-template-columns: 5fr 6fr; gap: 96px; }
+    }
+    .studio__body p {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(20px, 2vw, 24px);
+      line-height: 1.5;
+      margin: 0 0 24px 0;
+      max-width: 36ch;
+    }
+    .studio__body p:first-of-type::first-letter {
+      font-family: var(--serif);
+      font-size: 4.2em;
+      float: left;
+      line-height: 0.9;
+      padding: 6px 14px 0 0;
+      font-weight: 400;
+    }
+    .studio__plate {
+      aspect-ratio: 4/5;
+      background: linear-gradient(180deg, #2a261f 0%, #15120c 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .studio__plate::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(60% 50% at 30% 30%, rgba(244,239,231,0.08) 0%, transparent 60%),
+        repeating-linear-gradient(45deg, transparent 0 18px, rgba(244,239,231,0.025) 18px 36px);
+    }
+    .studio__plate-label {
+      position: absolute;
+      bottom: 24px; left: 24px;
+      color: var(--paper);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 18px;
+      opacity: 0.85;
+    }
+
+    /* ========= SERVIÇOS ========= */
+    .services {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-top: 0.5px solid var(--rule);
+    }
+    .services__item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 0.5px solid var(--rule);
+      align-items: baseline;
+    }
+    @media (min-width: 720px) {
+      .services__item { grid-template-columns: 64px 1fr 2fr; gap: 32px; padding: 40px 0; }
+    }
+    .services__num {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--mute);
+      font-size: 22px;
+      line-height: 1;
+    }
+    .services__name {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(22px, 2.4vw, 28px);
+      line-height: 1.2;
+      margin: 0;
+    }
+    .services__desc {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      max-width: 50ch;
+    }
+    @media (max-width: 719px) {
+      .services__desc { grid-column: 1 / -1; margin-left: 72px; margin-top: -8px; }
+    }
+
+    /* ========= NÚMEROS ========= */
+    .figures {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px 24px;
+    }
+    @media (min-width: 720px) {
+      .figures { grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    }
+    .figure__num {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px 0;
+    }
+    .figure__num em {
+      font-style: italic;
+      font-weight: 300;
+      font-size: 0.45em;
+      vertical-align: super;
+      color: var(--mute);
+    }
+    .figure__label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin: 0;
+      max-width: 18ch;
+    }
+
+    /* ========= DIÁLOGO (CTA) ========= */
+    .dialogue {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    .dialogue__title {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(36px, 6vw, 80px);
+      line-height: 1.05;
+      letter-spacing: 0.005em;
+      margin: 0 0 48px 0;
+      max-width: 18ch;
+    }
+    .dialogue__title em { font-style: italic; font-weight: 300; }
+    .dialogue__lead {
+      font-size: clamp(16px, 1.6vw, 18px);
+      line-height: 1.7;
+      max-width: 50ch;
+      margin: 0 0 56px 0;
+      color: #C8C1B0;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      padding: 18px 36px;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--paper);
+      border: 1px solid var(--paper);
+      cursor: pointer;
+      transition: background 240ms var(--ease), color 240ms var(--ease);
+    }
+    .btn:hover, .btn:focus-visible {
+      background: var(--paper); color: var(--ink); opacity: 1;
+    }
+    .dialogue__contact {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-top: 96px;
+      padding-top: 48px;
+      border-top: 0.5px solid #3A372F;
+    }
+    @media (min-width: 720px) {
+      .dialogue__contact { grid-template-columns: repeat(3, 1fr); gap: 48px; }
+    }
+    .dialogue__contact h3 {
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin: 0 0 16px 0;
+    }
+    .dialogue__contact p, .dialogue__contact a {
+      font-family: var(--serif);
+      font-size: 19px;
+      line-height: 1.4;
+      margin: 0;
+      color: var(--paper);
+    }
+
+    /* ========= FOOTER ========= */
+    .foot {
+      background: var(--paper);
+      color: var(--ink-soft);
+      padding: 56px 0 32px;
+      border-top: 0.5px solid var(--rule);
+    }
+    .foot__row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: baseline;
+    }
+    @media (min-width: 720px) {
+      .foot__row { grid-template-columns: 1fr auto; }
+    }
+    .foot__brand {
+      font-family: var(--serif);
+      font-size: 18px;
+      letter-spacing: 0.03em;
+    }
+    .foot__line {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+
+    /* ========= REVEAL ========= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 900ms var(--ease), transform 900ms var(--ease);
+    }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+  <header class="top" id="top">
+    <div class="wrap">
+      <div class="top__row">
+        <a href="#" class="brand" aria-label="RVR Projetos — voltar ao topo">
+          RVR
+          <small>Projetos · Est. 2025</small>
+        </a>
+        <nav class="top__nav" aria-label="Navegação">
+          <a href="#projetos">Projetos</a>
+          <a href="#estudio">Estúdio</a>
+          <a href="#servicos">Serviços</a>
+          <a href="#dialogo">Contato</a>
+        </nav>
+        <button type="button" class="top__menu" id="menuBtn" aria-expanded="false" aria-controls="drawer">
+          Menu
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer" id="drawer" hidden>
+    <ul>
+      <li><a href="#projetos" data-close>Projetos</a></li>
+      <li><a href="#estudio" data-close>Estúdio</a></li>
+      <li><a href="#servicos" data-close>Serviços</a></li>
+      <li><a href="#dialogo" data-close>Contato</a></li>
+    </ul>
+  </div>
+
+  <main id="main">
+
+    <!-- HERO / MANIFESTO -->
+    <section class="hero">
+      <div class="wrap">
+        <p class="hero__eyebrow reveal">Portfólio &middot; 2025—2026</p>
+        <h1 class="hero__statement reveal">
+          Arquitetura como <em>matéria precisa.</em>
+        </h1>
+        <dl class="hero__meta reveal">
+          <div>
+            <dt>Estúdio</dt>
+            <dd>RVR Projetos</dd>
+          </div>
+          <div>
+            <dt>Prática</dt>
+            <dd>Projetos residenciais, comerciais e institucionais — arquitetura e engenharia desenvolvidas sob o mesmo teto, do croqui à entrega.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- PROJETOS -->
+    <section class="section" id="projetos" aria-labelledby="projetos-h">
+      <div class="wrap">
+        <header class="head">
+          <p class="head__index reveal">01 — Obras selecionadas</p>
+          <h2 class="head__title reveal" id="projetos-h">Um recorte do que projetamos e construímos.</h2>
+        </header>
+
+        <div class="projects">
+          <article class="project project--wide reveal">
+            <figure class="project__media">
+              <img alt="Render da Casa Pátio — perspectiva externa" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 640' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='ga' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23dcd3bf'/%3E%3Cstop offset='1' stop-color='%23a89a7d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='640' fill='url(%23ga)'/%3E%3Crect x='80' y='420' width='640' height='220' fill='%2333291b' opacity='0.92'/%3E%3Crect x='160' y='180' width='480' height='260' fill='%23141414'/%3E%3Crect x='200' y='240' width='100' height='160' fill='%23f4efe7' opacity='0.9'/%3E%3Crect x='340' y='240' width='100' height='160' fill='%23f4efe7' opacity='0.6'/%3E%3Crect x='480' y='240' width='100' height='160' fill='%23f4efe7' opacity='0.8'/%3E%3Crect x='160' y='430' width='480' height='8' fill='%23f4efe7' opacity='0.4'/%3E%3C/svg%3E" />
+              <figcaption class="project__media-tag">Residencial</figcaption>
+            </figure>
+            <div class="project__info">
+              <p class="project__cat">Obra nº 01</p>
+              <h3 class="project__name">Casa <em>Pátio</em></h3>
+              <p class="project__desc">Residência unifamiliar organizada em torno de um pátio central. A pedra local, o concreto aparente e a madeira de demolição estabelecem o vocabulário da casa.</p>
+              <dl class="project__facts">
+                <div><dt>Tipologia</dt><dd>Residencial</dd></div>
+                <div><dt>Local</dt><dd>Interior de Minas</dd></div>
+                <div><dt>Área</dt><dd>320 m²</dd></div>
+                <div><dt>Ano</dt><dd>2026</dd></div>
+              </dl>
+            </div>
+          </article>
+
+          <article class="project project--reverse reveal">
+            <figure class="project__media">
+              <img alt="Render do Edifício Linear — perspectiva da fachada" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='gb' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ece6da'/%3E%3Cstop offset='1' stop-color='%23a89a7d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='1000' fill='url(%23gb)'/%3E%3Crect x='240' y='80' width='320' height='880' fill='%23141414'/%3E%3Cg fill='%23f4efe7' opacity='0.85'%3E%3Crect x='280' y='130' width='60' height='80'/%3E%3Crect x='370' y='130' width='60' height='80'/%3E%3Crect x='460' y='130' width='60' height='80'/%3E%3Crect x='280' y='240' width='60' height='80'/%3E%3Crect x='370' y='240' width='60' height='80'/%3E%3Crect x='460' y='240' width='60' height='80'/%3E%3Crect x='280' y='350' width='60' height='80'/%3E%3Crect x='370' y='350' width='60' height='80'/%3E%3Crect x='460' y='350' width='60' height='80'/%3E%3Crect x='280' y='460' width='60' height='80'/%3E%3Crect x='370' y='460' width='60' height='80'/%3E%3Crect x='460' y='460' width='60' height='80'/%3E%3Crect x='280' y='570' width='60' height='80'/%3E%3Crect x='370' y='570' width='60' height='80'/%3E%3Crect x='460' y='570' width='60' height='80'/%3E%3Crect x='280' y='680' width='60' height='80'/%3E%3Crect x='370' y='680' width='60' height='80'/%3E%3Crect x='460' y='680' width='60' height='80'/%3E%3Crect x='280' y='790' width='60' height='80'/%3E%3Crect x='370' y='790' width='60' height='80'/%3E%3Crect x='460' y='790' width='60' height='80'/%3E%3C/g%3E%3C/svg%3E" />
+              <figcaption class="project__media-tag">Edifício</figcaption>
+            </figure>
+            <div class="project__info">
+              <p class="project__cat">Obra nº 02</p>
+              <h3 class="project__name">Edifício <em>Linear</em></h3>
+              <p class="project__desc">Edifício residencial de oito pavimentos com fachada modulada por brises verticais. O térreo aberto devolve passagem e sombra à cidade.</p>
+              <dl class="project__facts">
+                <div><dt>Tipologia</dt><dd>Multifamiliar</dd></div>
+                <div><dt>Local</dt><dd>Belo Horizonte / MG</dd></div>
+                <div><dt>Área</dt><dd>4.200 m²</dd></div>
+                <div><dt>Ano</dt><dd>2025</dd></div>
+              </dl>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <figure class="project__media">
+              <img alt="Render do Galpão Industrial — cobertura em arco" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='gc' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23dcd3bf'/%3E%3Cstop offset='1' stop-color='%23877a64'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='1000' fill='url(%23gc)'/%3E%3Crect x='0' y='720' width='800' height='280' fill='%2333291b'/%3E%3Cpath d='M80 720 Q 400 360 720 720 Z' fill='%23141414'/%3E%3Crect x='340' y='560' width='120' height='160' fill='%23f4efe7' opacity='0.9'/%3E%3Cg stroke='%23f4efe7' stroke-width='2' opacity='0.4'%3E%3Cline x1='80' y1='720' x2='720' y2='720'/%3E%3C/g%3E%3C/svg%3E" />
+              <figcaption class="project__media-tag">Industrial</figcaption>
+            </figure>
+            <div class="project__info">
+              <p class="project__cat">Obra nº 03</p>
+              <h3 class="project__name">Galpão <em>Arco</em></h3>
+              <p class="project__desc">Estrutura metálica em arco vencendo 38 metros sem apoios intermediários. A geometria nasce de uma exigência estrutural e devolve o gesto à fachada.</p>
+              <dl class="project__facts">
+                <div><dt>Tipologia</dt><dd>Industrial</dd></div>
+                <div><dt>Local</dt><dd>Contagem / MG</dd></div>
+                <div><dt>Área</dt><dd>2.800 m²</dd></div>
+                <div><dt>Ano</dt><dd>2025</dd></div>
+              </dl>
+            </div>
+          </article>
+
+          <article class="project project--reverse project--wide reveal">
+            <figure class="project__media">
+              <img alt="Render do Posto Mirante — cobertura em balanço" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 640' preserveAspectRatio='xMidYMid slice'%3E%3Crect width='800' height='640' fill='%23ece6da'/%3E%3Crect x='0' y='460' width='800' height='180' fill='%23877a64'/%3E%3Crect x='160' y='240' width='480' height='40' fill='%23141414'/%3E%3Crect x='200' y='280' width='20' height='180' fill='%23141414'/%3E%3Crect x='580' y='280' width='20' height='180' fill='%23141414'/%3E%3Crect x='340' y='380' width='120' height='80' fill='%23f4efe7'/%3E%3Crect x='280' y='420' width='40' height='40' fill='%23141414' opacity='0.6'/%3E%3Crect x='480' y='420' width='40' height='40' fill='%23141414' opacity='0.6'/%3E%3C/svg%3E" />
+              <figcaption class="project__media-tag">Comercial</figcaption>
+            </figure>
+            <div class="project__info">
+              <p class="project__cat">Obra nº 04</p>
+              <h3 class="project__name">Posto <em>Mirante</em></h3>
+              <p class="project__desc">Cobertura em balanço de 14 metros sobre as bombas. A leitura é de uma única peça suspensa — não de um abrigo.</p>
+              <dl class="project__facts">
+                <div><dt>Tipologia</dt><dd>Comercial</dd></div>
+                <div><dt>Local</dt><dd>Sete Lagoas / MG</dd></div>
+                <div><dt>Área</dt><dd>620 m²</dd></div>
+                <div><dt>Ano</dt><dd>2025</dd></div>
+              </dl>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTÚDIO -->
+    <section class="section studio" id="estudio" aria-labelledby="estudio-h">
+      <div class="wrap">
+        <header class="head">
+          <p class="head__index reveal">02 — Estúdio</p>
+          <h2 class="head__title reveal" id="estudio-h">Arquitetura e engenharia, sob um único método.</h2>
+        </header>
+
+        <div class="studio__grid">
+          <div class="studio__plate reveal" aria-hidden="true">
+            <span class="studio__plate-label">Atelier — Belo Horizonte</span>
+          </div>
+          <div class="studio__body reveal">
+            <p>A RVR Projetos nasceu da convicção de que um bom projeto só existe quando arquitetura e engenharia caminham juntas — desde o primeiro croqui até o último detalhe de obra.</p>
+            <p>Não trabalhamos com camadas de subcontratação. Cada projeto é desenhado, calculado e acompanhado pela mesma equipe, sob um critério único: a obra precisa ser excelente, não apenas pronta.</p>
+            <p>Atendemos clientes que entendem que arquitetura é decisão de longo prazo — e que estão dispostos a investir tempo na frente para colher precisão depois.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="section" id="servicos" aria-labelledby="servicos-h">
+      <div class="wrap">
+        <header class="head">
+          <p class="head__index reveal">03 — Serviços</p>
+          <h2 class="head__title reveal" id="servicos-h">Do terreno à obra entregue.</h2>
+        </header>
+
+        <ol class="services reveal">
+          <li class="services__item">
+            <span class="services__num">i.</span>
+            <h3 class="services__name">Projeto arquitetônico</h3>
+            <p class="services__desc">Estudo preliminar, anteprojeto, projeto executivo e detalhamento de interiores.</p>
+          </li>
+          <li class="services__item">
+            <span class="services__num">ii.</span>
+            <h3 class="services__name">Projeto estrutural</h3>
+            <p class="services__desc">Cálculo estrutural em concreto armado, metálica e madeira — desenvolvido em paralelo à arquitetura.</p>
+          </li>
+          <li class="services__item">
+            <span class="services__num">iii.</span>
+            <h3 class="services__name">Projetos complementares</h3>
+            <p class="services__desc">Hidrossanitário, elétrica, climatização e prevenção contra incêndio compatibilizados em modelo único.</p>
+          </li>
+          <li class="services__item">
+            <span class="services__num">iv.</span>
+            <h3 class="services__name">Gerenciamento e construção</h3>
+            <p class="services__desc">Acompanhamento técnico, cronograma físico-financeiro e execução completa sob nossa responsabilidade.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- NÚMEROS -->
+    <section class="section" aria-labelledby="numeros-h">
+      <div class="wrap">
+        <header class="head">
+          <p class="head__index reveal">04 — Em números</p>
+          <h2 class="head__title reveal" id="numeros-h">Excelência aferida em obra.</h2>
+        </header>
+
+        <div class="figures">
+          <div class="reveal">
+            <p class="figure__num" data-counter data-target="126">0</p>
+            <p class="figure__label">Projetos desenvolvidos</p>
+          </div>
+          <div class="reveal">
+            <p class="figure__num" data-counter data-target="50">0</p>
+            <p class="figure__label">Clientes atendidos</p>
+          </div>
+          <div class="reveal">
+            <p class="figure__num"><span data-counter data-target="38">0</span><em>mil m²</em></p>
+            <p class="figure__label">Projetados em obra</p>
+          </div>
+          <div class="reveal">
+            <p class="figure__num"><span data-counter data-target="100">0</span><em>%</em></p>
+            <p class="figure__label">Satisfação dos clientes</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIÁLOGO / CONTATO -->
+    <section class="section dialogue" id="dialogo" aria-labelledby="dialogo-h">
+      <div class="wrap">
+        <p class="head__index reveal" style="color: var(--mute); margin-bottom: 32px;">05 — Diálogo</p>
+        <h2 class="dialogue__title reveal" id="dialogo-h">Tem um terreno, um programa, ou só uma <em>ideia ainda sem forma?</em></h2>
+        <p class="dialogue__lead reveal">Conversas iniciais não custam nada — e costumam ser a parte mais decisiva do processo. Conte para a gente o que você tem em mente.</p>
+        <div class="reveal">
+          <a class="btn" href="mailto:contato@rvrprojetos.com.br">Iniciar conversa</a>
+        </div>
+
+        <div class="dialogue__contact">
+          <div class="reveal">
+            <h3>E-mail</h3>
+            <a href="mailto:contato@rvrprojetos.com.br">contato@rvrprojetos.com.br</a>
+          </div>
+          <div class="reveal">
+            <h3>WhatsApp</h3>
+            <a href="tel:+5531000000000">+55 (31) 0000-0000</a>
+          </div>
+          <div class="reveal">
+            <h3>Atelier</h3>
+            <p>Belo Horizonte<br/>Minas Gerais — Brasil</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot__row">
+        <span class="foot__brand">RVR Projetos</span>
+        <span class="foot__line">© 2026 — Todos os direitos reservados</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ---- Header scrolled state ----
+      var top = document.getElementById('top');
+      function onScroll() {
+        var y = window.scrollY || window.pageYOffset;
+        top.classList.toggle('is-scrolled', y > 12);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // ---- Mobile drawer ----
+      var btn = document.getElementById('menuBtn');
+      var drawer = document.getElementById('drawer');
+      btn.addEventListener('click', function () {
+        var open = drawer.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        if (open) { drawer.removeAttribute('hidden'); document.body.style.overflow = 'hidden'; }
+        else { drawer.setAttribute('hidden', ''); document.body.style.overflow = ''; }
+      });
+      drawer.querySelectorAll('[data-close]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          drawer.classList.remove('is-open');
+          drawer.setAttribute('hidden', '');
+          btn.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        });
+      });
+
+      // ---- Reveal on scroll ----
+      var reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !reduceMotion) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+        setTimeout(function () { reveals.forEach(function (el) { el.classList.add('is-visible'); }); }, 4500);
+      } else {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+
+      // ---- Counters ----
+      function animate(el) {
+        var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        if (reduceMotion) { el.textContent = target; return; }
+        var start = performance.now();
+        var dur = 1800;
+        function tick(now) {
+          var t = Math.min(1, (now - start) / dur);
+          var eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          el.textContent = Math.round(target * eased);
+          if (t < 1) requestAnimationFrame(tick);
+          else el.textContent = target;
+        }
+        requestAnimationFrame(tick);
+      }
+      if ('IntersectionObserver' in window) {
+        var cio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { animate(e.target); cio.unobserve(e.target); }
+          });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('[data-counter]').forEach(function (el) { cio.observe(el); });
+      } else {
+        document.querySelectorAll('[data-counter]').forEach(animate);
+      }
+    })();
+  </script>
+</body>
+</html>
