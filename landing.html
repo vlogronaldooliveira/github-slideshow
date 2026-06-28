@@ -348,6 +348,14 @@
       padding-top: var(--section-py);
       padding-bottom: var(--section-py);
     }
+    /* Transparent spacer between hero and gallery — gives the video room
+       to play through its zoom-in shot uninterrupted by content. */
+    .video-spacer {
+      height: 120vh;
+      background: transparent;
+      pointer-events: none;
+    }
+
     /* Sections sit on top of the fixed video — semi-transparent dark tint
        throughout to keep text readable while video glows through. */
     .section-paper {
@@ -815,6 +823,9 @@
     <section class="hero" id="hero" aria-label="Portfólio">
       <h1 class="hero__slogan">Portfólio</h1>
     </section>
+
+    <!-- SPACER: scroll-driven zoom into the house, video plays uninterrupted -->
+    <div class="video-spacer" aria-hidden="true"></div>
 
     <!-- GALERIA DE PROJETOS -->
     <section class="section-paper" id="projetos" aria-labelledby="projetos-title">
