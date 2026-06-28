@@ -704,8 +704,8 @@
 <body>
   <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
-  <!-- BACKGROUND VIDEO — autoplay, loops as the main screen -->
-  <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+  <!-- BACKGROUND VIDEO — autoplay first 3 seconds then pause -->
+  <video class="bg-video" id="bgVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
     <source src="assets/scroll-bg.mp4" type="video/mp4" />
   </video>
   <div class="bg-video__tint" aria-hidden="true"></div>
@@ -1038,6 +1038,19 @@
 
       var COLLAPSED_SCALE = 0.50;
       var COLLAPSED_OFFSET_X = -32;
+      var STOP_AT_SECONDS = 3;
+
+      // Pause the video at the 3s mark and freeze it there
+      if (bgVideo) {
+        bgVideo.addEventListener('timeupdate', function () {
+          if (bgVideo.currentTime >= STOP_AT_SECONDS) {
+            try {
+              bgVideo.pause();
+              bgVideo.currentTime = STOP_AT_SECONDS;
+            } catch (e) {}
+          }
+        });
+      }
 
       function applyVideoTransform(t) {
         if (!bgVideo) return;
