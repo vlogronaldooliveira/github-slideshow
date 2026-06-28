@@ -308,6 +308,9 @@
       background: var(--rvr-black);
       transform-origin: 100% 50%;
       will-change: transform;
+      /* Smooth dock-to-miniature animation when the body class flips */
+      transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1);
+      image-rendering: auto;
     }
     .bg-video__tint {
       position: fixed; inset: 0;
@@ -322,7 +325,7 @@
 
     /* Content gets right padding when video docks to the right (desktop only) */
     @media (min-width: 1024px) {
-      body.video-collapsed .container { padding-right: calc(34vw + 64px); }
+      body.video-collapsed .container { padding-right: calc(52vw + 32px); }
     }
 
     /* All sections render over the fixed video. Default to dark cinematic
@@ -1212,7 +1215,7 @@
 
       // Targets driving the choreography
       var VIDEO_TIME_AT_PART2 = 3; // seconds — when entering gallery
-      var COLLAPSED_SCALE = 0.32;  // final video size on the right (≈32% of viewport)
+      var COLLAPSED_SCALE = 0.50;  // final video size on the right (50% of viewport — preserves 4K detail)
       var COLLAPSED_OFFSET_X = -32; // pixel inset from right edge when collapsed
 
       if (bgVideo) {
@@ -1265,15 +1268,19 @@
         var phaseProgress = 0; // 0..1 within the active phase
 
         if (y <= heroEnd) {
+          // Phase A — fullscreen, video frame 0
           sloganOpacity = 1;
           transformT = 0;
         } else if (y <= spacerEnd) {
+          // Phase B — fullscreen, video plays 0 → 3s, Portfolio fades
           var p = (y - heroEnd) / Math.max(1, spacerH);
           phaseProgress = p;
           var fadeP = Math.max(0, Math.min(1, p / 0.4));
           sloganOpacity = 1 - fadeP;
-          transformT = Math.max(0, Math.min(1, (p - 0.65) / 0.35));
+          transformT = 0; // stays fullscreen during the whole spacer
         } else {
+          // Phase C — at 3s mark: collapse to right (CSS transition handles
+          // the smooth dock animation), then keep scrubbing through the rest
           sloganOpacity = 0;
           transformT = 1;
           var post = (y - spacerEnd) / Math.max(1, (maxScroll - spacerEnd));
