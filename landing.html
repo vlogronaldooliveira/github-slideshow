@@ -297,35 +297,41 @@
       .nav__mobile-toggle, .nav__mobile-menu { display: none; }
     }
 
+    /* ============ SCROLL-DRIVEN BACKGROUND VIDEO ============ */
+    .bg-video {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh;
+      object-fit: cover;
+      z-index: -2;
+      pointer-events: none;
+      background: var(--rvr-black);
+    }
+    .bg-video__tint {
+      position: fixed; inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.55) 100%);
+      pointer-events: none;
+    }
+
+    /* All sections render over the fixed video. Default to dark cinematic
+       overlay so text remains legible while the video glows behind. */
+    body {
+      background: var(--rvr-black);
+      color: var(--rvr-white);
+    }
+
     /* ============ HERO ============ */
     .hero {
       position: relative;
       min-height: 100vh;
-      background: var(--rvr-black);
+      background: transparent;
       color: var(--rvr-white);
       display: flex; align-items: center; justify-content: center;
       padding: var(--hero-py) var(--pad-x);
       overflow: hidden;
-      isolation: isolate;
-    }
-    .hero__video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      z-index: 1;
-      background:
-        linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.35) 50%, rgba(10,10,10,0.75) 100%);
-      pointer-events: none;
     }
     .hero__slogan {
       position: relative;
-      z-index: 2;
       font-family: var(--font-display);
       font-weight: 400;
       font-size: clamp(40px, 9vw, 96px);
@@ -334,6 +340,7 @@
       text-align: center;
       margin: 0;
       max-width: 1200px;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.4);
     }
 
     /* ============ SECTION BASE ============ */
@@ -341,8 +348,20 @@
       padding-top: var(--section-py);
       padding-bottom: var(--section-py);
     }
-    .section-paper { background: var(--rvr-paper); color: var(--rvr-ink); }
-    .section-dark { background: var(--rvr-black); color: var(--rvr-white); }
+    /* Sections sit on top of the fixed video — semi-transparent dark tint
+       throughout to keep text readable while video glows through. */
+    .section-paper {
+      background: rgba(10, 10, 10, 0.72);
+      color: var(--rvr-white);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+    .section-dark {
+      background: rgba(10, 10, 10, 0.78);
+      color: var(--rvr-white);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
 
     .eyebrow {
       font-family: var(--font-body);
@@ -350,10 +369,9 @@
       font-size: 11px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--rvr-graphite);
+      color: var(--rvr-line);
       margin: 0 0 24px 0;
     }
-    .section-dark .eyebrow { color: var(--rvr-line); }
 
     .section-title {
       font-family: var(--font-display);
@@ -371,9 +389,8 @@
       line-height: 1.7;
       max-width: 60ch;
       margin: 0 0 64px 0;
-      color: var(--rvr-ink);
+      color: var(--rvr-line);
     }
-    .section-dark .section-lede { color: var(--rvr-line); }
 
     /* ============ GALERIA ============ */
     .gallery__grid {
@@ -735,6 +752,12 @@
 <body>
   <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
+  <!-- SCROLL-DRIVEN BACKGROUND VIDEO (covers whole page) -->
+  <video class="bg-video" id="bgVideo" muted playsinline preload="auto" aria-hidden="true">
+    <source src="assets/scroll-bg.mp4" type="video/mp4" />
+  </video>
+  <div class="bg-video__tint" aria-hidden="true"></div>
+
   <!-- INTRO -->
   <div class="intro" id="intro" role="dialog" aria-label="Apresentação de abertura">
     <div class="intro__stage" data-stage="1" aria-hidden="true"></div>
@@ -790,9 +813,6 @@
 
     <!-- HERO -->
     <section class="hero" id="hero" aria-label="Portfólio">
-      <video class="hero__video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-        <source src="assets/hero.mp4" type="video/mp4" />
-      </video>
       <h1 class="hero__slogan">Portfólio</h1>
     </section>
 
@@ -1152,6 +1172,46 @@
       } else {
         startIntro();
       }
+
+      // ---------- SCROLL-DRIVEN BACKGROUND VIDEO ----------
+      var bgVideo = document.getElementById('bgVideo');
+      var videoReady = false;
+      var videoTicking = false;
+
+      if (bgVideo) {
+        // Prime the video so currentTime scrubbing is responsive
+        bgVideo.addEventListener('loadedmetadata', function () {
+          videoReady = true;
+          try { bgVideo.pause(); } catch (e) {}
+          updateBgVideoTime();
+        });
+        bgVideo.load();
+      }
+
+      function updateBgVideoTime() {
+        if (!videoReady || !bgVideo || !bgVideo.duration || !isFinite(bgVideo.duration)) {
+          videoTicking = false;
+          return;
+        }
+        var doc = document.documentElement;
+        var maxScroll = (doc.scrollHeight - doc.clientHeight) || 1;
+        var progress = Math.max(0, Math.min(1, (window.scrollY || doc.scrollTop || 0) / maxScroll));
+        var target = bgVideo.duration * progress;
+        // Avoid setting currentTime to the same value (cheap guard)
+        if (Math.abs(bgVideo.currentTime - target) > 0.01) {
+          try { bgVideo.currentTime = target; } catch (e) {}
+        }
+        videoTicking = false;
+      }
+
+      function onScrollForVideo() {
+        if (!videoTicking) {
+          requestAnimationFrame(updateBgVideoTime);
+          videoTicking = true;
+        }
+      }
+      window.addEventListener('scroll', onScrollForVideo, { passive: true });
+      window.addEventListener('resize', onScrollForVideo, { passive: true });
 
       // ---------- HEADER (fade out on scroll past hero) ----------
       var header = document.getElementById('siteHeader');
