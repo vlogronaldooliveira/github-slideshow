@@ -227,77 +227,89 @@
       .nav__mobile-toggle, .nav__mobile-menu { display: none; }
     }
 
-    /* ============ SCROLL-DRIVEN BACKGROUND VIDEO ============ */
-    .bg-video {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      object-fit: cover;
-      z-index: -2;
-      pointer-events: none;
-      background: var(--rvr-black);
-      transform-origin: 100% 50%;
-      will-change: transform;
-      /* Smooth dock-to-miniature animation when the body class flips */
-      transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1);
-      image-rendering: auto;
-    }
-    /* Global tint removed — the video plays clean. Section backgrounds and
-       hero text-shadow handle legibility where needed. */
-    .bg-video__tint { display: none; }
-
-    /* Content gets right padding when video docks to the right (desktop only) */
-    @media (min-width: 1024px) {
-      body.video-collapsed .container { padding-right: calc(52vw + 32px); }
-    }
-
-    /* All sections render over the fixed video. Default to dark cinematic
-       overlay so text remains legible while the video glows behind. */
+    /* All sections render with a dark cinematic backdrop so the docked
+       video on the right stays legible alongside the content on the left. */
     body {
       background: var(--rvr-black);
       color: var(--rvr-white);
     }
 
-    /* ============ HERO ============ */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      background: transparent;
-      color: var(--rvr-white);
-      padding: var(--hero-py) var(--pad-x);
-      overflow: visible;
+    /* ============ HERO VIDEO + SCROLL CHOREOGRAPHY ============ */
+    /* Default state: video lives in its document-flow landing zone
+       (`.video-land`), where it lands as the final-frame thumbnail. */
+    .hero-video {
+      display: block;
+      position: absolute;
+      top: 50%;
+      right: var(--pad-x);
+      width: 50vw;
+      height: 50vh;
+      max-width: none;
+      transform: translateY(-50%);
+      transform-origin: 100% 50%;
+      object-fit: cover;
+      background: var(--rvr-black);
+      will-change: transform;
+      image-rendering: auto;
     }
-    /* Slogan is fixed centered so it persists across the hero and into the
-       spacer; JS fades it out as the user scrolls past the hero. */
-    .hero__slogan {
+    /* Active state: pinned to the viewport while the user scrubs through
+       the video timeline. JS sets transform each frame for smooth scaling. */
+    .hero-video.is-fixed {
       position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(40px, 9vw, 96px);
-      line-height: 1.1;
-      letter-spacing: 0.02em;
-      text-align: center;
-      margin: 0;
-      max-width: 1200px;
-      text-shadow: 0 2px 32px rgba(0,0,0,0.6), 0 0 80px rgba(0,0,0,0.35);
-      z-index: 5;
+      top: 0;
+      left: 0;
+      right: auto;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+    @media (max-width: 1023px) {
+      .hero-video {
+        position: relative;
+        top: auto; right: auto;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        transform: none;
+      }
+      .hero-video.is-fixed {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+      }
+    }
+
+    /* Hero scrub zone — invisible scroll runway that drives the video from
+       0s through the dock animation. Its height is calibrated in JS based on
+       the loaded video duration so the dock finishes right as content
+       starts. Defaults to a sensible fallback while metadata is loading. */
+    .scrub-hero {
+      height: 320vh;
       pointer-events: none;
-      will-change: opacity;
+    }
+
+    /* Content zone — sections appear on the left while the video is docked
+       on the right. The right padding reserves space for the thumbnail. */
+    .content-zone { position: relative; }
+    @media (min-width: 1024px) {
+      .content-zone .container {
+        padding-right: calc(52vw + var(--pad-x));
+      }
+    }
+
+    /* Video landing zone — placeholder height that matches the docked
+       thumbnail's footprint so the video has a natural slot to return to
+       at end-of-timeline. Position: relative anchors the in-flow video. */
+    .video-land {
+      position: relative;
+      height: 100vh;
+      pointer-events: none;
     }
 
     /* ============ SECTION BASE ============ */
     section {
       padding-top: var(--section-py);
       padding-bottom: var(--section-py);
-    }
-    /* Transparent spacer between hero and gallery — Portfolio fades out
-       here and the video advances to ~3s before content (part 2) appears. */
-    .video-spacer {
-      height: 200vh;
-      background: transparent;
-      pointer-events: none;
     }
 
     /* Sections sit on top of the fixed video — semi-transparent dark tint
@@ -704,11 +716,6 @@
 <body>
   <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
-  <!-- BACKGROUND VIDEO — autoplay first 3 seconds then pause -->
-  <video class="bg-video" id="bgVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
-    <source src="assets/scroll-bg.mp4" type="video/mp4" />
-  </video>
-  <div class="bg-video__tint" aria-hidden="true"></div>
 
   <!-- HEADER -->
   <header class="site-header" id="siteHeader" role="banner">
@@ -754,11 +761,13 @@
 
   <main id="main">
 
-    <!-- HERO -->
-    <section class="hero" id="hero" aria-label="Portfólio"></section>
+    <!-- Hero scrub zone — empty space whose scroll length drives the video
+         from 0 → ~3s, after which the dock animation completes. -->
+    <div class="scrub-hero" id="scrubHero" aria-hidden="true"></div>
 
-    <!-- SPACER: scroll-driven zoom into the house, video plays uninterrupted -->
-    <div class="video-spacer" aria-hidden="true"></div>
+    <!-- Content zone: video has docked to the right, sections appear on the
+         left. The video continues scrubbing as the user scrolls through. -->
+    <div class="content-zone" id="contentZone">
 
     <!-- GALERIA DE PROJETOS -->
     <section class="section-paper" id="projetos" aria-labelledby="projetos-title">
@@ -975,6 +984,19 @@
       </div>
     </section>
 
+    </div><!-- /content-zone -->
+
+    <!-- Video lands here at the end of its timeline. Initially the video is
+         taken out of flow (`position: fixed`); when the video reaches its
+         last frame the JS removes the `is-fixed` class and the video settles
+         here naturally — same visual position as the docked thumbnail, then
+         scrolls away with the rest of the page. -->
+    <div class="video-land" id="videoLand">
+      <video class="hero-video is-fixed" id="heroVideo" muted playsinline preload="auto" aria-hidden="true">
+        <source src="assets/scroll-bg.mp4" type="video/mp4" />
+      </video>
+    </div>
+
     <!-- CTA -->
     <section class="section-dark cta" id="contato" aria-labelledby="cta-title">
       <div class="container">
@@ -1028,83 +1050,154 @@
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // ---------- VIDEO + DOCK CHOREOGRAPHY ----------
-      // Video autoplays as the main screen. Scroll only controls when it
-      // docks to the right (entering "part 2") and the section overlays.
-      var bgVideo = document.getElementById('bgVideo');
-      var heroEl = document.getElementById('hero');
-      var spacerEl = document.querySelector('.video-spacer');
+      // ---------- HERO VIDEO: SCROLL-SCRUBBED + DOCK + END-FREEZE ----------
+      // The video does NOT autoplay. Its currentTime is bound to the scroll
+      // position so the user controls playback. After ~3s, the video docks
+      // to the right (CSS transforms via rAF). When the timeline ends, the
+      // is-fixed class is removed and the video settles into normal flow.
+      var heroVideo = document.getElementById('heroVideo');
+      var scrubHero = document.getElementById('scrubHero');
+      var contentZone = document.getElementById('contentZone');
+      var videoLand = document.getElementById('videoLand');
+      var videoReady = false;
+      var videoDuration = 0;
       var ticking = false;
+      var resizePending = false;
 
-      var COLLAPSED_SCALE = 0.50;
-      var COLLAPSED_OFFSET_X = -32;
-      var STOP_AT_SECONDS = 3;
+      // Target moment when the dock animation begins, in seconds of video.
+      var DOCK_AT_SECONDS = 3;
+      // How much extra scroll (relative to total scrub length) the dock
+      // animation spans. Smaller = snappier transition; larger = slower.
+      var DOCK_SCROLL_FRACTION = 0.05;
+      // Final thumbnail size (proportional to viewport)
+      var THUMB_SCALE = 0.50;
+      // Pixel inset of the thumbnail from the right edge
+      var THUMB_RIGHT_INSET = 32;
 
-      // Pause the video at the 3s mark and freeze it there
-      if (bgVideo) {
-        bgVideo.addEventListener('timeupdate', function () {
-          if (bgVideo.currentTime >= STOP_AT_SECONDS) {
-            try {
-              bgVideo.pause();
-              bgVideo.currentTime = STOP_AT_SECONDS;
-            } catch (e) {}
-          }
-        });
+      function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+      function easeInOut(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       }
 
-      function applyVideoTransform(t) {
-        if (!bgVideo) return;
-        var scale = 1 - (1 - COLLAPSED_SCALE) * t;
-        var translateX = COLLAPSED_OFFSET_X * t;
-        bgVideo.style.transform = 'translateX(' + translateX + 'px) scale(' + scale + ')';
-      }
-
-      function updateLayout() {
-        ticking = false;
-        // Mobile: video always fullscreen, no dock
+      // Calibrate the scrub-hero scroll length so that the dock animation
+      // completes exactly when the content-zone begins (no content visible
+      // during the fullscreen → thumbnail transition).
+      function calibrate() {
+        if (!videoReady || videoDuration <= 0) return;
+        if (!scrubHero || !contentZone) return;
+        // Skip calibration on mobile (simpler layout, no dock)
         if (window.innerWidth < 1024) {
-          applyVideoTransform(0);
-          document.body.classList.remove('video-collapsed');
+          scrubHero.style.height = '100vh';
           return;
         }
-        var y = window.scrollY || 0;
-        var heroH = heroEl ? heroEl.offsetHeight : window.innerHeight;
-        var spacerH = spacerEl ? spacerEl.offsetHeight : window.innerHeight * 2;
-        var spacerEnd = heroH + spacerH;
-        var collapsed = y > spacerEnd;
-        applyVideoTransform(collapsed ? 1 : 0);
-        document.body.classList.toggle('video-collapsed', collapsed);
+        var contentH = contentZone.offsetHeight;
+        // Progress at which the dock animation ends
+        var dockEndProgress = Math.min(0.95, DOCK_AT_SECONDS / videoDuration + DOCK_SCROLL_FRACTION);
+        // scrubHero / (scrubHero + contentH) = dockEndProgress
+        //   →  scrubHero = dockEndProgress * contentH / (1 - dockEndProgress)
+        var scrubHeroH = (dockEndProgress * contentH) / (1 - dockEndProgress);
+        // Clamp to a reasonable minimum so it never collapses
+        scrubHeroH = Math.max(scrubHeroH, window.innerHeight * 1.5);
+        scrubHero.style.height = Math.round(scrubHeroH) + 'px';
       }
 
-      function scheduleLayout() {
+      if (heroVideo) {
+        heroVideo.addEventListener('loadedmetadata', function () {
+          videoReady = true;
+          videoDuration = heroVideo.duration || 0;
+          try { heroVideo.pause(); } catch (e) {}
+          calibrate();
+          schedule();
+        });
+        heroVideo.load();
+      }
+
+      function update() {
+        ticking = false;
+        if (!heroVideo) return;
+
+        var isMobile = window.innerWidth < 1024;
+        var y = window.scrollY || window.pageYOffset || 0;
+
+        // The scrub region spans from y=0 to the top of videoLand.
+        var scrubEnd = videoLand ? videoLand.offsetTop : (window.innerHeight * 4);
+        var progress = clamp01(y / Math.max(1, scrubEnd));
+
+        // FREEZE PHASE — past the scrub region: release fixed positioning,
+        // pin the video at its last frame, let it scroll with the page.
+        if (progress >= 1) {
+          if (heroVideo.classList.contains('is-fixed')) {
+            heroVideo.classList.remove('is-fixed');
+            heroVideo.style.transform = '';
+          }
+          if (videoReady && videoDuration > 0) {
+            var lastFrame = Math.max(0, videoDuration - 0.04);
+            if (heroVideo.currentTime < lastFrame) {
+              try { heroVideo.currentTime = lastFrame; } catch (e) {}
+            }
+          }
+          return;
+        }
+
+        // ACTIVE PHASE — pin to viewport, scrub video time, animate transform.
+        if (!heroVideo.classList.contains('is-fixed')) {
+          heroVideo.classList.add('is-fixed');
+        }
+
+        // Map scroll progress to video time.
+        if (videoReady && videoDuration > 0) {
+          var targetTime = videoDuration * progress;
+          // Avoid redundant assignments (browsers throttle currentTime).
+          if (Math.abs(heroVideo.currentTime - targetTime) > 0.016) {
+            try { heroVideo.currentTime = targetTime; } catch (e) {}
+          }
+        }
+
+        // Dock transform: 0 = fullscreen, 1 = right-side thumbnail.
+        if (isMobile) {
+          heroVideo.style.transform = '';
+          return;
+        }
+        var dockStart = (videoReady && videoDuration > 0)
+          ? Math.min(0.9, DOCK_AT_SECONDS / videoDuration)
+          : 0.35;
+        var dockEnd = Math.min(0.95, dockStart + DOCK_SCROLL_FRACTION);
+        var dockT = clamp01((progress - dockStart) / Math.max(0.0001, dockEnd - dockStart));
+        var eased = easeInOut(dockT);
+        var scale = 1 - (1 - THUMB_SCALE) * eased;
+        var tx = -THUMB_RIGHT_INSET * eased;
+        heroVideo.style.transform = 'translate3d(' + tx + 'px, 0, 0) scale(' + scale + ')';
+      }
+
+      function schedule() {
         if (!ticking) {
-          requestAnimationFrame(updateLayout);
+          requestAnimationFrame(update);
           ticking = true;
         }
       }
-      window.addEventListener('scroll', scheduleLayout, { passive: true });
-      window.addEventListener('resize', scheduleLayout, { passive: true });
-      scheduleLayout();
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', function () {
+        if (resizePending) return;
+        resizePending = true;
+        requestAnimationFrame(function () {
+          resizePending = false;
+          calibrate();
+          schedule();
+        });
+      }, { passive: true });
+      schedule();
 
-      // ---------- HEADER (fade out on scroll past hero) ----------
+      // ---------- HEADER (fade out on scroll past viewport top) ----------
       var header = document.getElementById('siteHeader');
-      var hero = document.getElementById('hero');
       var lastY = 0;
 
       function onScroll() {
         var y = window.scrollY || window.pageYOffset;
-        var heroBottom = hero.offsetTop + hero.offsetHeight;
 
         if (y > 80) {
           header.classList.add('is-hidden');
         } else {
           header.classList.remove('is-hidden');
-        }
-
-        if (y > heroBottom - 100) {
-          header.classList.add('is-light');
-        } else {
-          header.classList.remove('is-light');
         }
         lastY = y;
       }
