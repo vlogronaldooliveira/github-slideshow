@@ -3,1335 +3,576 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="RVR Projetos — Cada projeto, uma obra excelente. Arquitetura e engenharia sob o mesmo teto." />
-  <meta name="theme-color" content="#0A0A0A" />
-  <title>RVR Projetos — Cada projeto, uma obra excelente.</title>
+  <title>RVR Projetos — Um projeto, uma obra de excelência.</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 
   <style>
+    /* ============ VARIÁVEIS GLOBAIS ============ */
     :root {
-      --rvr-black: #0A0A0A;
-      --rvr-paper: #FAFAF8;
-      --rvr-white: #FFFFFF;
-      --rvr-ink: #161616;
-      --rvr-graphite: #787873;
-      --rvr-line: #D6D4CC;
-
-      --font-display: 'Marcellus', 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
-      --font-body: 'Inter', 'Neue Haas Grotesk', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-
-      --ease: cubic-bezier(0.65, 0, 0.35, 1);
-
-      --pad-x: 24px;
-      --container-max: 1440px;
-
-      --section-py: 120px;
-      --hero-py: 160px;
+      --bg-color: #FAFAF9; /* Off-white de estúdio */
+      --text-main: #1A1A1A;
+      --text-muted: #7E7E77;
+      --border-color: #E6E6E1;
+      --font-serif: 'Playfair Display', serif;
+      --font-sans: 'Inter', sans-serif;
     }
 
-    @media (min-width: 768px) {
-      :root { --pad-x: 48px; --section-py: 140px; --hero-py: 180px; }
-    }
-    @media (min-width: 1024px) {
-      :root { --pad-x: 80px; --section-py: 160px; --hero-py: 200px; }
-    }
+    /* ============ RESET & BASE ============ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    @media (pointer: fine) {
+      body { cursor: none; }
+    }
 
     body {
-      margin: 0;
-      background: var(--rvr-paper);
-      color: var(--rvr-ink);
-      font-family: var(--font-body);
-      font-weight: 300;
-      font-size: 16px;
-      line-height: 1.6;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    @media (min-width: 768px) { body { font-size: 17px; } }
-    @media (min-width: 1024px) { body { font-size: 18px; } }
+    ::-webkit-scrollbar { width: 0px; background: transparent; }
 
-    img, svg, video { display: block; max-width: 100%; height: auto; }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: color 300ms var(--ease), opacity 300ms var(--ease);
-    }
-    a:hover, a:focus-visible { color: var(--rvr-black); }
-
-    :focus-visible {
-      outline: 2px solid var(--rvr-black);
-      outline-offset: 4px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: var(--container-max);
-      margin: 0 auto;
-      padding-left: var(--pad-x);
-      padding-right: var(--pad-x);
-    }
-
-    .visually-hidden {
-      position: absolute !important;
-      width: 1px; height: 1px;
-      padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0);
-      white-space: nowrap; border: 0;
-    }
-
-    .skip-link {
-      position: absolute;
-      left: 8px; top: 8px;
-      padding: 12px 16px;
-      background: var(--rvr-black);
-      color: var(--rvr-white);
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      transform: translateY(-200%);
-      z-index: 1000;
-    }
-    .skip-link:focus { transform: translateY(0); }
-
-    /* ============ HEADER ============ */
-    .site-header {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 50;
-      padding: 24px 0;
-      background: transparent;
-      transition: opacity 400ms var(--ease), transform 400ms var(--ease);
-    }
-    .site-header.is-hidden {
-      opacity: 0;
-      transform: translateY(-20px);
-      pointer-events: none;
-    }
-
-    .nav {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .nav__list {
-      list-style: none;
-      margin: 0; padding: 0;
-      display: flex;
-      gap: 24px;
-    }
-    .nav__list--right { justify-content: flex-end; position: relative; }
-    .nav__list--center { justify-content: center; }
-    .nav__list--left { justify-content: flex-start; }
-
-    .nav a, .nav__toggle {
-      font-family: var(--font-body);
-      font-weight: 400;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--rvr-white);
-      padding: 12px 4px;
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      background: transparent;
-      border: 0;
-      cursor: pointer;
-    }
-    .site-header.is-light .nav a,
-    .site-header.is-light .nav__toggle { color: var(--rvr-ink); }
-
-    .nav a:hover, .nav a:focus-visible,
-    .nav__toggle:hover, .nav__toggle:focus-visible {
-      opacity: 0.6;
-    }
-
-    .nav__submenu {
-      position: absolute;
-      top: 100%; right: 0;
-      margin-top: 8px;
-      padding: 16px 0;
-      list-style: none;
-      background: var(--rvr-black);
-      color: var(--rvr-white);
-      min-width: 220px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-8px);
-      transition: opacity 300ms var(--ease), transform 300ms var(--ease), visibility 300ms var(--ease);
-    }
-    .nav__item--has-submenu:hover .nav__submenu,
-    .nav__item--has-submenu:focus-within .nav__submenu,
-    .nav__submenu.is-open {
-      opacity: 1; visibility: visible; transform: translateY(0);
-    }
-    .nav__submenu a {
-      display: block;
-      padding: 12px 24px;
-      color: var(--rvr-white);
-      min-height: 44px;
-    }
-    .nav__submenu a:hover, .nav__submenu a:focus-visible { opacity: 0.6; }
-
-    @media (max-width: 767px) {
-      .nav {
-        display: flex;
-        justify-content: flex-end;
-      }
-      .nav__list--left, .nav__list--center, .nav__list--right { display: none; }
-      .nav__mobile-toggle {
-        display: inline-flex;
-        font-family: var(--font-body);
-        font-size: 12px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--rvr-white);
-        padding: 12px 4px;
-        min-height: 44px;
-        background: transparent;
-        border: 0;
-        align-items: center;
-        cursor: pointer;
-      }
-      .site-header.is-light .nav__mobile-toggle { color: var(--rvr-ink); }
-      .nav__mobile-menu {
-        display: none;
-        position: fixed;
-        top: 64px; left: 0; right: 0; bottom: 0;
-        background: var(--rvr-black);
-        color: var(--rvr-white);
-        padding: 32px 24px;
-        overflow-y: auto;
-      }
-      .nav__mobile-menu.is-open { display: block; }
-      .nav__mobile-menu ul { list-style: none; margin: 0; padding: 0; }
-      .nav__mobile-menu li { border-bottom: 0.5px solid var(--rvr-graphite); }
-      .nav__mobile-menu a {
-        display: block;
-        padding: 20px 0;
-        color: var(--rvr-white);
-        font-size: 14px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        min-height: 44px;
-      }
-      .nav__mobile-menu .sub-list { padding-left: 16px; }
-      .nav__mobile-menu .sub-list a { font-size: 12px; padding: 14px 0; }
-    }
-    @media (min-width: 768px) {
-      .nav__mobile-toggle, .nav__mobile-menu { display: none; }
-    }
-
-    /* All sections render with a dark cinematic backdrop so the docked
-       video on the right stays legible alongside the content on the left. */
-    body {
-      background: var(--rvr-black);
-      color: var(--rvr-white);
-    }
-
-    /* ============ HERO VIDEO + SCROLL CHOREOGRAPHY ============ */
-    /* Default state: video lives in its document-flow landing zone
-       (`.video-land`), where it lands as the final-frame thumbnail. */
-    .hero-video {
-      display: block;
-      position: absolute;
-      top: 50%;
-      right: var(--pad-x);
-      width: 50vw;
-      height: 50vh;
-      max-width: none;
-      transform: translateY(-50%);
-      transform-origin: 100% 50%;
-      object-fit: cover;
-      background: var(--rvr-black);
-      will-change: transform;
-      image-rendering: auto;
-    }
-    /* Active state: pinned to the viewport while the user scrubs through
-       the video timeline. JS sets transform each frame for smooth scaling. */
-    .hero-video.is-fixed {
+    /* ============ PRELOADER INTERATIVO ============ */
+    .preloader {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: auto;
+      inset: 0;
+      background-color: var(--bg-color);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .preloader-logo {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      letter-spacing: -0.02em;
+    }
+    .preloader-status {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ============ CURSOR CUSTOMIZADO (ZARA) ============ */
+    .custom-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 10px; height: 10px;
+      background-color: var(--text-main);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: width 0.3s, height 0.3s, background-color 0.3s;
+    }
+    .custom-cursor span {
+      font-size: 6px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: var(--text-main);
+      opacity: 0;
+      text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+    @media (max-width: 768px) {
+      .custom-cursor { display: none; }
+    }
+
+    /* ============ HERO CONTÊINER ============ */
+    .hero-container {
+      position: relative;
       width: 100vw;
       height: 100vh;
-      z-index: 1;
-    }
-    @media (max-width: 1023px) {
-      .hero-video {
-        position: relative;
-        top: auto; right: auto;
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9;
-        transform: none;
-      }
-      .hero-video.is-fixed {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-      }
-    }
-
-    /* Hero scrub zone — invisible scroll runway that drives the video from
-       0s through the dock animation. Its height is calibrated in JS based on
-       the loaded video duration so the dock finishes right as content
-       starts. Defaults to a sensible fallback while metadata is loading. */
-    .scrub-hero {
-      height: 320vh;
-      pointer-events: none;
-    }
-
-    /* Content zone — sections appear on the left while the video is docked
-       on the right. The right padding reserves space for the thumbnail. */
-    .content-zone { position: relative; }
-    @media (min-width: 1024px) {
-      .content-zone .container {
-        padding-right: calc(52vw + var(--pad-x));
-      }
-    }
-
-    /* Video landing zone — placeholder height that matches the docked
-       thumbnail's footprint so the video has a natural slot to return to
-       at end-of-timeline. Position: relative anchors the in-flow video. */
-    .video-land {
-      position: relative;
-      height: 100vh;
-      pointer-events: none;
-    }
-
-    /* ============ SECTION BASE ============ */
-    section {
-      padding-top: var(--section-py);
-      padding-bottom: var(--section-py);
-    }
-
-    /* Sections sit on top of the fixed video — semi-transparent dark tint
-       throughout to keep text readable while video glows through. */
-    .section-paper {
-      background: rgba(10, 10, 10, 0.72);
-      color: var(--rvr-white);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
-    }
-    .section-dark {
-      background: rgba(10, 10, 10, 0.78);
-      color: var(--rvr-white);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
-    }
-
-    .eyebrow {
-      font-family: var(--font-body);
-      font-weight: 400;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--rvr-line);
-      margin: 0 0 24px 0;
-    }
-
-    .section-title {
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(32px, 5.5vw, 56px);
-      line-height: 1.15;
-      letter-spacing: 0.01em;
-      margin: 0 0 32px 0;
-      max-width: 18ch;
-    }
-
-    .section-lede {
-      font-size: clamp(16px, 1.6vw, 18px);
-      font-weight: 300;
-      line-height: 1.7;
-      max-width: 60ch;
-      margin: 0 0 64px 0;
-      color: var(--rvr-line);
-    }
-
-    /* ============ GALERIA ============ */
-    .gallery__grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 80px;
-    }
-    @media (min-width: 768px) {
-      .gallery__grid {
-        grid-template-columns: repeat(12, 1fr);
-        gap: 48px 32px;
-      }
-      .gallery__card:nth-child(1) { grid-column: span 7; }
-      .gallery__card:nth-child(2) { grid-column: span 5; margin-top: 80px; }
-      .gallery__card:nth-child(3) { grid-column: span 5; }
-      .gallery__card:nth-child(4) { grid-column: span 7; margin-top: 80px; }
-    }
-
-    .gallery__card { position: relative; }
-    .gallery__media {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
       overflow: hidden;
-      background: var(--rvr-line);
     }
-    .gallery__slide {
-      position: absolute; inset: 0;
+    .hero-text {
+      position: absolute;
+      left: 6vw;
+      z-index: 10;
       opacity: 0;
-      transition: opacity 600ms var(--ease);
     }
-    .gallery__slide.is-active { opacity: 1; }
-    .gallery__slide img {
+    .hero-text h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 6vw, 6.5rem);
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+    .hero-video-wrapper {
+      position: absolute;
+      top: 0; right: 0;
+      width: 100vw; height: 100vh;
+      z-index: 20;
+      background: #000;
+      transform-origin: right center;
+    }
+    .hero-video-wrapper video {
       width: 100%; height: 100%;
       object-fit: cover;
-      transition: transform 600ms var(--ease);
+      opacity: 0.85;
     }
-    .gallery__media:hover .gallery__slide.is-active img { transform: scale(1.05); }
 
-    .gallery__indicator {
-      position: absolute;
-      bottom: 16px; right: 16px;
-      font-family: var(--font-display);
-      font-size: 14px;
-      color: var(--rvr-white);
-      mix-blend-mode: difference;
-      letter-spacing: 0.05em;
-    }
-    .gallery__nav {
-      position: absolute;
-      bottom: 16px; left: 16px;
-      display: flex; gap: 8px;
-    }
-    .gallery__nav-btn {
-      width: 44px; height: 44px;
-      display: inline-flex; align-items: center; justify-content: center;
-      background: rgba(250,250,248,0.85);
-      color: var(--rvr-ink);
-      border: 0;
-      cursor: pointer;
-      font-size: 18px;
-      font-family: var(--font-body);
-      transition: background 300ms var(--ease), color 300ms var(--ease);
-    }
-    .gallery__nav-btn:hover, .gallery__nav-btn:focus-visible {
-      background: var(--rvr-black); color: var(--rvr-white);
-    }
-    .gallery__meta {
-      margin-top: 16px;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--rvr-graphite);
-      display: flex; flex-wrap: wrap; gap: 8px 16px;
+    /* ============ SEÇÃO: MANIFESTO ============ */
+    .manifesto {
+      min-height: 80vh;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      padding: 0 10vw;
+      background-color: var(--bg-color);
     }
-    .gallery__meta-sep {
-      display: inline-block;
-      width: 24px; height: 0.5px;
-      background: var(--rvr-line);
+    .manifesto h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4.5vw, 4.8rem);
+      font-weight: 400;
+      line-height: 1.2;
+      text-align: center;
+      max-w: 1200px;
     }
-    .gallery__step-label {
-      margin-top: 8px;
-      font-size: 11px;
-      letter-spacing: 0.15em;
+    .manifesto h2 span {
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    /* ============ GALERIA EDITORIAL (ESTILO ZARA) ============ */
+    .portfolio-section {
+      padding: 10vw 6vw;
+      background-color: var(--bg-color);
+    }
+    .portfolio-header {
+      margin-bottom: 8vw;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 2rem;
+    }
+    .portfolio-header p {
+      font-size: 0.75rem;
       text-transform: uppercase;
-      color: var(--rvr-graphite);
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .portfolio-header h3 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      font-weight: 400;
     }
 
-    /* ============ DESEMPENHO ============ */
-    .stats {
+    /* Grid Assimétrico Premium */
+    .gallery-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 64px;
-    }
-    @media (min-width: 768px) {
-      .stats { grid-template-columns: repeat(2, 1fr); gap: 80px; }
-    }
-    @media (min-width: 1024px) {
-      .stats { grid-template-columns: repeat(4, 1fr); gap: 48px; }
-    }
-
-    .stat__media {
+      grid-template-columns: repeat(12, 1fr);
+      gap: 6vw 4vw;
       width: 100%;
-      aspect-ratio: 4/5;
-      background: linear-gradient(180deg, #1a1a18 0%, #2a2a26 100%);
-      margin-bottom: 24px;
-      overflow: hidden;
+    }
+
+    .gallery-item {
       position: relative;
-    }
-    .stat__media::after {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,0.02) 12px 24px);
+      display: flex;
+      flex-direction: column;
     }
 
-    .stat__number {
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(72px, 12vw, 140px);
-      line-height: 1;
-      letter-spacing: -0.02em;
-      margin: 0 0 16px 0;
-      color: var(--rvr-white);
+    /* Variação de tamanhos das colunas (Estética Editorial) */
+    .col-7 { grid-column: span 7; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-12 { grid-column: span 12; display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; align-items: center;}
+
+    /* Contêiner de Imagem Interativo Flip/Fade */
+    .card-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 11;
+      background-color: #EEE;
+      overflow: hidden;
+      border-radius: 2px;
     }
-    .stat__label {
-      font-size: 11px;
-      letter-spacing: 0.15em;
+    .col-5 .card-media { aspect-ratio: 4 / 5; } /* Fotos verticais intercaladas */
+
+    .media-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+    }
+    .layer-blueprint {
+      opacity: 0;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-color: #FAFAF9;
+    }
+
+    /* Hover: Revelação Elegante da Prancha Técnica */
+    .gallery-item:hover .layer-render { opacity: 0; transform: scale(1.03); }
+    .gallery-item:hover .layer-blueprint { opacity: 1; }
+
+    .card-info {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .card-info .discipline {
+      font-size: 0.65rem;
       text-transform: uppercase;
-      color: var(--rvr-line);
-      margin: 0;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+    }
+    .card-info .project-name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      margin-top: 0.25rem;
+    }
+    .card-info .tech-spec {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
     }
 
-    .stats__quote {
-      margin: 96px 0 0 0;
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(22px, 3vw, 32px);
-      line-height: 1.4;
-      max-width: 32ch;
-      color: var(--rvr-white);
+    /* ============ SEÇÃO CONTATO CONCIERGE ============ */
+    .contact {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12vh 6vw 5vh 6vw;
+      background-color: #121212;
+      color: #FAFAF9;
     }
-
-    /* ============ SOBRE ============ */
-    .about__grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 48px;
-    }
-    @media (min-width: 1024px) {
-      .about__grid { grid-template-columns: 5fr 7fr; gap: 80px; align-items: start; }
-    }
-    .about__body p {
-      font-size: clamp(16px, 1.6vw, 18px);
-      line-height: 1.7;
-      margin: 0 0 24px 0;
-      max-width: 60ch;
-    }
-
-    /* ============ SERVIÇOS ============ */
-    .services__list {
-      list-style: none;
-      margin: 0; padding: 0;
-      border-top: 0.5px solid var(--rvr-line);
-    }
-    .services__item {
-      padding: 32px 0;
-      border-bottom: 0.5px solid var(--rvr-line);
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-    @media (min-width: 768px) {
-      .services__item {
-        grid-template-columns: 1fr 2fr;
-        gap: 48px;
-        padding: 40px 0;
-        align-items: baseline;
-      }
-    }
-    .services__name {
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(22px, 2.6vw, 28px);
-      margin: 0;
-      line-height: 1.3;
-    }
-    .services__desc {
-      font-size: clamp(15px, 1.4vw, 17px);
-      color: var(--rvr-graphite);
-      line-height: 1.6;
-    }
-
-    /* ============ DEPOIMENTOS ============ */
-    .testimonials__list {
-      list-style: none;
-      margin: 0; padding: 0;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 64px;
-    }
-    @media (min-width: 768px) {
-      .testimonials__list { grid-template-columns: repeat(2, 1fr); gap: 64px 48px; }
-    }
-    .testimonial blockquote {
-      margin: 0;
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(22px, 2.4vw, 28px);
-      line-height: 1.4;
-      max-width: 36ch;
-    }
-    .testimonial cite {
+    .contact-eyebrow {
       display: block;
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 0.5px solid var(--rvr-line);
-      font-style: normal;
-      font-size: 11px;
-      letter-spacing: 0.15em;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: #8A8A82;
       text-transform: uppercase;
-      color: var(--rvr-graphite);
+      margin-bottom: 2.5rem;
     }
-
-    /* ============ CTA ============ */
-    .cta {
-      padding-top: var(--hero-py);
-      padding-bottom: var(--hero-py);
-      text-align: left;
-    }
-    .cta__title {
-      font-family: var(--font-display);
+    .contact-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5.5vw, 5.5rem);
+      line-height: 1.1;
       font-weight: 400;
-      font-size: clamp(32px, 6vw, 64px);
-      line-height: 1.15;
-      letter-spacing: 0.01em;
-      margin: 0 0 32px 0;
-      max-width: 22ch;
+      margin-bottom: 2rem;
     }
-    .cta__subtitle {
-      font-size: clamp(16px, 1.6vw, 18px);
-      line-height: 1.7;
-      max-width: 50ch;
-      margin: 0 0 48px 0;
-      color: var(--rvr-line);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center; justify-content: center;
-      min-height: 44px;
-      padding: 16px 32px;
-      font-family: var(--font-body);
-      font-weight: 400;
-      font-size: 12px;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--rvr-white);
-      border: 1px solid var(--rvr-white);
-      cursor: pointer;
-      transition: background 300ms var(--ease), color 300ms var(--ease);
-    }
-    .btn:hover, .btn:focus-visible {
-      background: var(--rvr-white); color: var(--rvr-black);
-    }
-    .btn--invert {
-      color: var(--rvr-black); border-color: var(--rvr-black);
-    }
-    .btn--invert:hover, .btn--invert:focus-visible {
-      background: var(--rvr-black); color: var(--rvr-white);
-    }
-
-    /* ============ FOOTER ============ */
-    .site-footer {
-      background: var(--rvr-black);
-      color: var(--rvr-line);
-      padding: 96px 0 32px 0;
-    }
-    .footer__tagline {
-      font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(20px, 2.4vw, 28px);
-      line-height: 1.4;
-      max-width: 22ch;
-      margin: 0 0 64px 0;
-      color: var(--rvr-white);
-    }
-    .footer__grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 48px;
-      padding-bottom: 64px;
-      border-bottom: 0.5px solid var(--rvr-graphite);
-    }
-    @media (min-width: 768px) {
-      .footer__grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-    }
-    .footer__col h2 {
-      font-family: var(--font-body);
-      font-weight: 400;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--rvr-graphite);
-      margin: 0 0 24px 0;
-    }
-    .footer__col ul { list-style: none; padding: 0; margin: 0; }
-    .footer__col li { margin-bottom: 12px; }
-    .footer__col a, .footer__col p {
-      color: var(--rvr-white);
-      font-size: 14px;
+    .contact-desc {
+      font-size: 1rem;
       line-height: 1.6;
-      margin: 0 0 8px 0;
-      display: inline-block;
-      min-height: 24px;
+      color: #8A8A82;
+      margin-bottom: 4rem;
+      max-width: 450px;
     }
-    .footer__col a {
-      padding: 4px 0;
-      min-height: 44px;
+    .contact-btn {
       display: inline-flex;
       align-items: center;
-    }
-    .footer__col a:hover, .footer__col a:focus-visible { opacity: 0.6; }
-
-    .footer__bottom {
-      padding-top: 32px;
-      font-size: 11px;
-      letter-spacing: 0.10em;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--rvr-graphite);
+      color: #FAFAF9;
+      text-decoration: none;
+      border-bottom: 1px solid #FAFAF9;
+      padding-bottom: 0.5rem;
+      transition: opacity 0.3s;
     }
+    .contact-btn:hover { opacity: 0.5; }
 
-    /* ============ ANIMATIONS — reveal on scroll ============ */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 800ms var(--ease), transform 800ms var(--ease);
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 8rem;
+      border-t: 1px solid #2A2A28;
+      padding-top: 2rem;
     }
-    .reveal.is-visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    /* ============ REDUCED MOTION ============ */
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      .reveal { opacity: 1; transform: none; }
-      .intro__slogan span { opacity: 1; transform: none; }
-    }
+    .footer-logo { font-family: var(--font-serif); font-size: 2.2rem; }
+    .footer-logo span { display: block; font-family: var(--font-sans); font-size: 0.55rem; letter-spacing: 0.25em; color: #8A8A82; text-transform: uppercase; margin-top: 2px;}
+    .footer-rights { text-align: right; font-size: 0.65rem; letter-spacing: 0.1em; color: #8A8A82; text-transform: uppercase; line-height: 1.6; }
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
+  <div class="preloader" id="preloader">
+    <div class="preloader-logo">RVR</div>
+    <div class="preloader-status">Carregando Acervo...</div>
+  </div>
 
-  <!-- HEADER -->
-  <header class="site-header" id="siteHeader" role="banner">
-    <div class="container">
-      <nav class="nav" aria-label="Navegação principal">
-        <ul class="nav__list nav__list--left">
-          <li><a href="#sobre">Sobre</a></li>
-        </ul>
-        <ul class="nav__list nav__list--center">
-          <li><a href="#projetos">Projetos</a></li>
-        </ul>
-        <ul class="nav__list nav__list--right">
-          <li class="nav__item--has-submenu">
-            <button type="button" class="nav__toggle" id="servicosToggle" aria-haspopup="true" aria-expanded="false" aria-controls="servicosMenu">Serviços</button>
-            <ul class="nav__submenu" id="servicosMenu" role="menu" aria-label="Submenu Serviços">
-              <li role="none"><a href="#servicos" role="menuitem">Arquitetura</a></li>
-              <li role="none"><a href="#servicos" role="menuitem">Engenharia civil</a></li>
-              <li role="none"><a href="#servicos" role="menuitem">Edifícios</a></li>
-              <li role="none"><a href="#servicos" role="menuitem">Casas</a></li>
-            </ul>
-          </li>
-        </ul>
-        <button type="button" class="nav__mobile-toggle" id="mobileToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Abrir menu">Menu</button>
-      </nav>
-      <div class="nav__mobile-menu" id="mobileMenu" hidden>
-        <ul>
-          <li><a href="#sobre" data-nav-close>Sobre</a></li>
-          <li><a href="#projetos" data-nav-close>Projetos</a></li>
-          <li>
-            <a href="#servicos" data-nav-close>Serviços</a>
-            <ul class="sub-list">
-              <li><a href="#servicos" data-nav-close>Arquitetura</a></li>
-              <li><a href="#servicos" data-nav-close>Engenharia civil</a></li>
-              <li><a href="#servicos" data-nav-close>Edifícios</a></li>
-              <li><a href="#servicos" data-nav-close>Casas</a></li>
-            </ul>
-          </li>
-          <li><a href="#contato" data-nav-close>Contato</a></li>
-        </ul>
+  <div class="custom-cursor" id="cursor">
+    <span id="cursorText"></span>
+  </div>
+
+  <main id="mainContent" style="visibility: hidden;">
+
+    <section class="hero-container" id="heroSection">
+      <div class="hero-text" id="heroText">
+        <h1>RVR Projetos</h1>
       </div>
-    </div>
-  </header>
-
-  <main id="main">
-
-    <!-- Hero scrub zone — empty space whose scroll length drives the video
-         from 0 → ~3s, after which the dock animation completes. -->
-    <div class="scrub-hero" id="scrubHero" aria-hidden="true"></div>
-
-    <!-- Content zone: video has docked to the right, sections appear on the
-         left. The video continues scrubbing as the user scrolls through. -->
-    <div class="content-zone" id="contentZone">
-
-    <!-- GALERIA DE PROJETOS -->
-    <section class="section-paper" id="projetos" aria-labelledby="projetos-title">
-      <div class="container">
-        <p class="eyebrow reveal">Portfólio RVR</p>
-        <h2 class="section-title reveal" id="projetos-title">Obras que carregam nossa assinatura</h2>
-        <p class="section-lede reveal">Por trás de cada render, um projeto técnico completo. Deslize para ver as plantas de cada obra.</p>
-
-        <div class="gallery__grid">
-          <!-- Card 1 -->
-          <article class="gallery__card reveal" data-project>
-            <div class="gallery__media" data-slider>
-              <div class="gallery__slide is-active"><img alt="Render do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23d6d4cc'/%3E%3Cstop offset='1' stop-color='%23787873'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23g1)'/%3E%3Crect x='180' y='220' width='440' height='280' fill='%230a0a0a' opacity='0.85'/%3E%3Crect x='260' y='320' width='80' height='180' fill='%23fafaf8' opacity='0.9'/%3E%3Crect x='400' y='280' width='160' height='60' fill='%23fafaf8' opacity='0.7'/%3E%3Crect x='400' y='360' width='160' height='60' fill='%23fafaf8' opacity='0.6'/%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta baixa do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='400' y1='120' x2='400' y2='480'/%3E%3Cline x1='120' y1='300' x2='680' y2='300'/%3E%3Cline x1='250' y1='300' x2='250' y2='480'/%3E%3Cline x1='550' y1='120' x2='550' y2='300'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta estrutural do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='120' y='120' width='20' height='20'/%3E%3Crect x='280' y='120' width='20' height='20'/%3E%3Crect x='440' y='120' width='20' height='20'/%3E%3Crect x='600' y='120' width='20' height='20'/%3E%3Crect x='120' y='280' width='20' height='20'/%3E%3Crect x='280' y='280' width='20' height='20'/%3E%3Crect x='440' y='280' width='20' height='20'/%3E%3Crect x='600' y='280' width='20' height='20'/%3E%3Crect x='120' y='440' width='20' height='20'/%3E%3Crect x='280' y='440' width='20' height='20'/%3E%3Crect x='440' y='440' width='20' height='20'/%3E%3Crect x='600' y='440' width='20' height='20'/%3E%3C/g%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='500' height='340'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta elétrica do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='120' y1='300' x2='680' y2='300' stroke-dasharray='4 4'/%3E%3Ccircle cx='250' cy='220' r='8'/%3E%3Ccircle cx='400' cy='220' r='8'/%3E%3Ccircle cx='550' cy='220' r='8'/%3E%3Ccircle cx='250' cy='380' r='8'/%3E%3Ccircle cx='400' cy='380' r='8'/%3E%3Ccircle cx='550' cy='380' r='8'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta hidráulica do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 200 L300 200 L300 350 L500 350 L500 200 L680 200'/%3E%3Cpath d='M120 420 L680 420'/%3E%3Ccircle cx='300' cy='200' r='4' fill='%230a0a0a'/%3E%3Ccircle cx='500' cy='350' r='4' fill='%230a0a0a'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta de esgoto do projeto residencial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 350 L250 350 L250 450 L550 450 L550 350 L680 350' stroke-dasharray='8 4'/%3E%3Ccircle cx='250' cy='350' r='6'/%3E%3Ccircle cx='550' cy='450' r='6'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
-              <div class="gallery__nav">
-                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
-                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
-              </div>
-            </div>
-            <div class="gallery__step-label" data-step-label>Render</div>
-            <div class="gallery__meta">
-              <span>Residencial</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Nome do projeto</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Localização</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Ano</span>
-            </div>
-          </article>
-
-          <!-- Card 2 -->
-          <article class="gallery__card reveal" data-project>
-            <div class="gallery__media" data-slider>
-              <div class="gallery__slide is-active"><img alt="Render do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3ClinearGradient id='g2' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23787873'/%3E%3Cstop offset='1' stop-color='%23d6d4cc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23g2)'/%3E%3Crect x='220' y='140' width='360' height='400' fill='%23161616'/%3E%3Cg fill='%23fafaf8' opacity='0.8'%3E%3Crect x='250' y='180' width='80' height='40'/%3E%3Crect x='360' y='180' width='80' height='40'/%3E%3Crect x='470' y='180' width='80' height='40'/%3E%3Crect x='250' y='250' width='80' height='40'/%3E%3Crect x='360' y='250' width='80' height='40'/%3E%3Crect x='470' y='250' width='80' height='40'/%3E%3Crect x='250' y='320' width='80' height='40'/%3E%3Crect x='360' y='320' width='80' height='40'/%3E%3Crect x='470' y='320' width='80' height='40'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta baixa do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='280' y1='120' x2='280' y2='480'/%3E%3Cline x1='520' y1='120' x2='520' y2='480'/%3E%3Cline x1='120' y1='300' x2='680' y2='300'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta estrutural do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='120' y='120' width='24' height='24'/%3E%3Crect x='340' y='120' width='24' height='24'/%3E%3Crect x='560' y='120' width='24' height='24'/%3E%3Crect x='120' y='340' width='24' height='24'/%3E%3Crect x='340' y='340' width='24' height='24'/%3E%3Crect x='560' y='340' width='24' height='24'/%3E%3C/g%3E%3Crect x='120' y='120' width='464' height='244' stroke='%230a0a0a' stroke-width='1' fill='none'/%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta elétrica do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 300 L680 300' stroke-dasharray='3 5'/%3E%3Ccircle cx='200' cy='200' r='6'/%3E%3Ccircle cx='400' cy='200' r='6'/%3E%3Ccircle cx='600' cy='200' r='6'/%3E%3Ccircle cx='200' cy='400' r='6'/%3E%3Ccircle cx='400' cy='400' r='6'/%3E%3Ccircle cx='600' cy='400' r='6'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta hidráulica do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 250 L400 250 L400 400 L680 400'/%3E%3Ccircle cx='400' cy='250' r='5' fill='%230a0a0a'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta de esgoto do projeto comercial" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 400 L300 400 L300 300 L500 300 L500 400 L680 400' stroke-dasharray='8 4'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
-              <div class="gallery__nav">
-                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
-                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
-              </div>
-            </div>
-            <div class="gallery__step-label" data-step-label>Render</div>
-            <div class="gallery__meta">
-              <span>Comercial</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Nome do projeto</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Localização</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Ano</span>
-            </div>
-          </article>
-
-          <!-- Card 3 -->
-          <article class="gallery__card reveal" data-project>
-            <div class="gallery__media" data-slider>
-              <div class="gallery__slide is-active"><img alt="Render do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23d6d4cc'/%3E%3Crect x='120' y='400' width='560' height='160' fill='%23787873'/%3E%3Crect x='200' y='200' width='400' height='40' fill='%230a0a0a'/%3E%3Crect x='210' y='240' width='20' height='160' fill='%230a0a0a'/%3E%3Crect x='570' y='240' width='20' height='160' fill='%230a0a0a'/%3E%3Crect x='350' y='340' width='100' height='60' fill='%23fafaf8'/%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta baixa do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Crect x='300' y='250' width='200' height='100'/%3E%3Ccircle cx='200' cy='300' r='20'/%3E%3Ccircle cx='600' cy='300' r='20'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta estrutural do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='180' y='180' width='28' height='28'/%3E%3Crect x='600' y='180' width='28' height='28'/%3E%3Crect x='180' y='400' width='28' height='28'/%3E%3Crect x='600' y='400' width='28' height='28'/%3E%3C/g%3E%3Crect x='180' y='180' width='448' height='248' stroke='%230a0a0a' stroke-width='1' fill='none'/%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta elétrica do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cline x1='400' y1='120' x2='400' y2='480' stroke-dasharray='4 4'/%3E%3Ccircle cx='300' cy='250' r='10'/%3E%3Ccircle cx='500' cy='250' r='10'/%3E%3Ccircle cx='300' cy='400' r='10'/%3E%3Ccircle cx='500' cy='400' r='10'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta hidráulica do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 300 L680 300'/%3E%3Cpath d='M400 120 L400 480'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta de esgoto do posto de combustível" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none' stroke-dasharray='8 4'%3E%3Crect x='120' y='120' width='560' height='360'/%3E%3Cpath d='M120 450 L680 450'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
-              <div class="gallery__nav">
-                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
-                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
-              </div>
-            </div>
-            <div class="gallery__step-label" data-step-label>Render</div>
-            <div class="gallery__meta">
-              <span>Posto de combustível</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Nome do projeto</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Localização</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Ano</span>
-            </div>
-          </article>
-
-          <!-- Card 4 -->
-          <article class="gallery__card reveal" data-project>
-            <div class="gallery__media" data-slider>
-              <div class="gallery__slide is-active"><img alt="Render do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3ClinearGradient id='g4' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23d6d4cc'/%3E%3Cstop offset='1' stop-color='%23787873'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23g4)'/%3E%3Crect x='300' y='80' width='200' height='480' fill='%230a0a0a'/%3E%3Cg fill='%23fafaf8' opacity='0.85'%3E%3Crect x='320' y='110' width='30' height='40'/%3E%3Crect x='370' y='110' width='30' height='40'/%3E%3Crect x='420' y='110' width='30' height='40'/%3E%3Crect x='470' y='110' width='30' height='40'/%3E%3Crect x='320' y='170' width='30' height='40'/%3E%3Crect x='370' y='170' width='30' height='40'/%3E%3Crect x='420' y='170' width='30' height='40'/%3E%3Crect x='470' y='170' width='30' height='40'/%3E%3Crect x='320' y='230' width='30' height='40'/%3E%3Crect x='370' y='230' width='30' height='40'/%3E%3Crect x='420' y='230' width='30' height='40'/%3E%3Crect x='470' y='230' width='30' height='40'/%3E%3Crect x='320' y='290' width='30' height='40'/%3E%3Crect x='370' y='290' width='30' height='40'/%3E%3Crect x='420' y='290' width='30' height='40'/%3E%3Crect x='470' y='290' width='30' height='40'/%3E%3Crect x='320' y='350' width='30' height='40'/%3E%3Crect x='370' y='350' width='30' height='40'/%3E%3Crect x='420' y='350' width='30' height='40'/%3E%3Crect x='470' y='350' width='30' height='40'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta baixa do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cline x1='400' y1='100' x2='400' y2='500'/%3E%3Cline x1='200' y1='300' x2='600' y2='300'/%3E%3Cline x1='300' y1='100' x2='300' y2='300'/%3E%3Cline x1='500' y1='300' x2='500' y2='500'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta estrutural do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg fill='%230a0a0a'%3E%3Crect x='180' y='100' width='30' height='30'/%3E%3Crect x='390' y='100' width='30' height='30'/%3E%3Crect x='600' y='100' width='30' height='30'/%3E%3Crect x='180' y='280' width='30' height='30'/%3E%3Crect x='390' y='280' width='30' height='30'/%3E%3Crect x='600' y='280' width='30' height='30'/%3E%3Crect x='180' y='470' width='30' height='30'/%3E%3Crect x='390' y='470' width='30' height='30'/%3E%3Crect x='600' y='470' width='30' height='30'/%3E%3C/g%3E%3Crect x='180' y='100' width='450' height='400' stroke='%230a0a0a' stroke-width='1' fill='none'/%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta elétrica do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='1' fill='none'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cline x1='200' y1='300' x2='600' y2='300' stroke-dasharray='4 4'/%3E%3Ccircle cx='280' cy='200' r='8'/%3E%3Ccircle cx='400' cy='200' r='8'/%3E%3Ccircle cx='520' cy='200' r='8'/%3E%3Ccircle cx='280' cy='400' r='8'/%3E%3Ccircle cx='400' cy='400' r='8'/%3E%3Ccircle cx='520' cy='400' r='8'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta hidráulica do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cpath d='M200 200 L400 200 L400 400 L600 400'/%3E%3Cpath d='M400 100 L400 500'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__slide"><img alt="Planta de esgoto do edifício" loading="lazy" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23fafaf8'/%3E%3Cg stroke='%230a0a0a' stroke-width='2' fill='none' stroke-dasharray='8 4'%3E%3Crect x='200' y='100' width='400' height='400'/%3E%3Cpath d='M200 450 L600 450'/%3E%3Cpath d='M400 100 L400 500'/%3E%3C/g%3E%3C/svg%3E" /></div>
-              <div class="gallery__indicator" aria-live="polite"><span data-current>1</span> / <span data-total>6</span></div>
-              <div class="gallery__nav">
-                <button type="button" class="gallery__nav-btn" data-prev aria-label="Planta anterior">&larr;</button>
-                <button type="button" class="gallery__nav-btn" data-next aria-label="Próxima planta">&rarr;</button>
-              </div>
-            </div>
-            <div class="gallery__step-label" data-step-label>Render</div>
-            <div class="gallery__meta">
-              <span>Edifício</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Nome do projeto</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Localização</span>
-              <span class="gallery__meta-sep" aria-hidden="true"></span>
-              <span>Ano</span>
-            </div>
-          </article>
-        </div>
+      <div class="hero-video-wrapper" id="heroVideo" data-cursor="ASSISTIR">
+        <video id="mainVideo" autoplay muted loop playsinline preload="auto">
+          <source src="assets/scroll-bg.mp4" type="video/mp4">
+        </video>
       </div>
     </section>
 
-    <!-- DESEMPENHO -->
-    <section class="section-dark" id="desempenho" aria-labelledby="desempenho-title">
-      <div class="container">
-        <p class="eyebrow reveal">Excelência, em números</p>
-        <h2 class="section-title reveal" id="desempenho-title">Nosso desempenho em movimento</h2>
-        <p class="section-lede reveal">Cada número aqui representa obras reais, entregues com o mesmo padrão de excelência.</p>
+    <section class="manifesto">
+      <h2>Um projeto,<br><span>uma obra de excelência.</span></h2>
+    </section>
 
-        <div class="stats">
-          <div class="stat reveal">
-            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo de projetos desenvolvidos"></div>
-            <p class="stat__number" data-counter data-target="126" data-suffix="">0</p>
-            <p class="stat__label">Projetos desenvolvidos</p>
+    <section class="portfolio-section">
+      <div class="portfolio-header">
+        <p>Índice Técnico Integrado</p>
+        <h3>Disciplinas sob o mesmo teto.</h3>
+      </div>
+
+      <div class="gallery-grid">
+
+        <div class="gallery-item col-7" data-cursor="VER PLANTA">
+          <div class="card-media">
+            <div class="media-layer layer-render" style="background-image: url('caminho_do_render_arquitetura.jpg');"></div>
+            <div class="media-layer layer-blueprint" style="background-image: url('caminho_da_prancha_arquitetura.jpg');"></div>
           </div>
-          <div class="stat reveal">
-            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo de clientes atendidos"></div>
-            <p class="stat__number" data-counter data-target="50" data-suffix="">0</p>
-            <p class="stat__label">Clientes atendidos</p>
-          </div>
-          <div class="stat reveal">
-            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo do ano de atividade"></div>
-            <p class="stat__number" data-counter data-target="1" data-suffix="">0</p>
-            <p class="stat__label">Ano de atividade</p>
-          </div>
-          <div class="stat reveal">
-            <div class="stat__media" role="img" aria-label="Vídeo ilustrativo da satisfação dos clientes"></div>
-            <p class="stat__number" data-counter data-target="100" data-suffix="%">0%</p>
-            <p class="stat__label">Satisfação dos clientes</p>
+          <div class="card-info">
+            <div>
+              <div class="discipline">01 / Arquitetura Executiva</div>
+              <div class="project-name">Concepção Espacial</div>
+            </div>
+            <div class="tech-spec">
+              Prancha A0<br>Escala 1:50
+            </div>
           </div>
         </div>
 
-        <p class="stats__quote reveal">Não contamos quantos projetos fizemos. Contamos quantos foram, de fato, excelentes.</p>
-      </div>
-    </section>
-
-    <!-- SOBRE -->
-    <section class="section-paper" id="sobre" aria-labelledby="sobre-title">
-      <div class="container">
-        <div class="about__grid">
-          <div>
-            <p class="eyebrow reveal">Sobre</p>
-            <h2 class="section-title reveal" id="sobre-title">Arquitetura e engenharia com o mesmo padrão</h2>
+        <div class="gallery-item col-5" data-cursor="VER PLANTA">
+          <div class="card-media">
+            <div class="media-layer layer-render" style="background-image: url('caminho_do_render_estrutura.jpg');"></div>
+            <div class="media-layer layer-blueprint" style="background-image: url('caminho_da_prancha_estrutura.jpg');"></div>
           </div>
-          <div class="about__body reveal">
-            <p>A RVR Projetos nasceu de uma convicção simples: um bom projeto só existe quando arquitetura e engenharia caminham juntas, desde o primeiro esboço até a última demão de tinta.</p>
-            <p>É por isso que projetamos e construímos sob o mesmo teto. Cada decisão — de estrutura, material, prazo ou custo — é tomada com um único critério em mente: a obra precisa ser excelente, não apenas pronta.</p>
+          <div class="card-info">
+            <div>
+              <div class="discipline">02 / Engenharia Estrutural</div>
+              <div class="project-name">Cálculo e Infraestrutura</div>
+            </div>
+            <div class="tech-spec">
+              Prancha A0<br>Formato Técnico
+            </div>
           </div>
         </div>
+
+        <div class="gallery-item col-5" data-cursor="VER PLANTA">
+          <div class="card-media">
+            <div class="media-layer layer-render" style="background-image: url('foto 01.jpg');"></div>
+            <div class="media-layer layer-blueprint" style="background-image: url('foto 02.jpg');"></div>
+          </div>
+          <div class="card-info">
+            <div>
+              <div class="discipline">03 / Luminotécnico & Gesso</div>
+              <div class="project-name">Distribuição de Fluxo</div>
+            </div>
+            <div class="tech-spec">
+              Prancha P06<br>Escala Indicada
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item col-7" data-cursor="VER PLANTA">
+          <div class="card-media">
+            <div class="media-layer layer-render" style="background-image: url('caminho_da_perspectiva_marcenaria.jpg');"></div>
+            <div class="media-layer layer-blueprint" style="background-image: url('foto 03.jpg');"></div>
+          </div>
+          <div class="card-info">
+            <div>
+              <div class="discipline">04 / Detalhamento Técnico</div>
+              <div class="project-name">Elevações da Cozinha</div>
+            </div>
+            <div class="tech-spec">
+              Prancha P11<br>Rigor Executivo
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-item col-12" data-cursor="VER COMPATIBILIZAÇÃO">
+          <div class="card-media">
+            <div class="media-layer layer-render" style="background-image: url('caminho_da_ilha_render.jpg');"></div>
+            <div class="media-layer layer-blueprint" style="background-image: url('foto 04.jpg');"></div>
+          </div>
+          <div class="card-info" style="margin-top: 0;">
+            <div>
+              <div class="discipline">05 / Engenharia de Detalhe</div>
+              <div class="project-name">Marcenaria e Infra da Ilha Gourmet</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem; max-width: 350px; line-height: 1.5;">A integração perfeita de tomadas, hidráulica e serralharia embutidas milimetricamente no mobiliário.</p>
+            </div>
+            <div class="tech-spec">
+              Prancha P19<br>Executivo Final
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- SERVIÇOS -->
-    <section class="section-paper" id="servicos" aria-labelledby="servicos-title" style="padding-top: 0;">
-      <div class="container">
-        <p class="eyebrow reveal">Serviços</p>
-        <h2 class="section-title reveal" id="servicos-title">Do terreno à obra excelente</h2>
+    <section class="contact" id="contactSection">
+      <div class="contact-content">
+        <span class="contact-eyebrow">Atendimento Exclusivo</span>
+        <h2 class="contact-title">Vamos desenhar o seu<br>próximo marco architectural.</h2>
+        <p class="contact-desc">Entre em contato direto com nossa equipe de especialistas. Atendimento restrito, personalizado e sob total confidencialidade.</p>
 
-        <ul class="services__list reveal">
-          <li class="services__item">
-            <h3 class="services__name">Projeto arquitetônico</h3>
-            <p class="services__desc">concepção, anteprojeto e executivo</p>
-          </li>
-          <li class="services__item">
-            <h3 class="services__name">Projeto estrutural e complementares</h3>
-            <p class="services__desc">engenharia integrada desde o início</p>
-          </li>
-          <li class="services__item">
-            <h3 class="services__name">Gerenciamento de obra</h3>
-            <p class="services__desc">acompanhamento técnico e cronograma</p>
-          </li>
-          <li class="services__item">
-            <h3 class="services__name">Construção</h3>
-            <p class="services__desc">execução completa, do alicerce ao acabamento</p>
-          </li>
-        </ul>
+        <a href="https://wa.me/SEUNUMERO" target="_blank" class="contact-btn" data-cursor="CONVERSAR">
+          Iniciar Atendimento Premium ↗
+        </a>
       </div>
-    </section>
 
-    <!-- DEPOIMENTOS -->
-    <section class="section-paper" id="depoimentos" aria-labelledby="depoimentos-title">
-      <div class="container">
-        <p class="eyebrow reveal">Excelência reconhecida</p>
-        <h2 class="visually-hidden" id="depoimentos-title">Depoimentos</h2>
-
-        <ul class="testimonials__list">
-          <li class="testimonial reveal">
-            <blockquote>"Texto do depoimento do cliente — uma ou duas frases sobre a experiência com a RVR."</blockquote>
-            <cite>— Nome do cliente, Nome do projeto</cite>
-          </li>
-          <li class="testimonial reveal">
-            <blockquote>"Texto do depoimento do cliente — uma ou duas frases sobre a experiência com a RVR."</blockquote>
-            <cite>— Nome do cliente, Nome do projeto</cite>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    </div><!-- /content-zone -->
-
-    <!-- Video lands here at the end of its timeline. Initially the video is
-         taken out of flow (`position: fixed`); when the video reaches its
-         last frame the JS removes the `is-fixed` class and the video settles
-         here naturally — same visual position as the docked thumbnail, then
-         scrolls away with the rest of the page. -->
-    <div class="video-land" id="videoLand">
-      <video class="hero-video is-fixed" id="heroVideo" muted playsinline preload="auto" aria-hidden="true">
-        <source src="assets/scroll-bg.mp4" type="video/mp4" />
-      </video>
-    </div>
-
-    <!-- CTA -->
-    <section class="section-dark cta" id="contato" aria-labelledby="cta-title">
-      <div class="container">
-        <h2 class="cta__title reveal" id="cta-title">O seu projeto também pode ser uma obra excelente.</h2>
-        <p class="cta__subtitle reveal">Conte para a gente o que você tem em mente — um terreno, um programa ou só uma ideia ainda sem forma.</p>
-        <div class="reveal">
-          <a class="btn" href="mailto:contato@rvrprojetos.com.br">Falar com a RVR</a>
+      <div class="footer-bottom">
+        <div class="footer-logo">RVR<span>Projetos</span></div>
+        <div class="footer-rights">
+          <p>Arquitetura & Engenharia Integrada</p>
+          <p>© 2026 RVR Projetos. Todos os direitos reservados.</p>
         </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container">
-      <p class="footer__tagline">RVR Projetos — Cada projeto, uma obra excelente.</p>
-
-      <div class="footer__grid">
-        <div class="footer__col">
-          <h2>Contato</h2>
-          <ul>
-            <li><a href="mailto:contato@rvrprojetos.com.br">E-mail: contato@rvrprojetos.com.br</a></li>
-            <li><a href="tel:+550000000000">WhatsApp: (00) 00000-0000</a></li>
-          </ul>
-        </div>
-        <div class="footer__col">
-          <h2>Navegação</h2>
-          <ul>
-            <li><a href="#sobre">Sobre</a></li>
-            <li><a href="#projetos">Projetos</a></li>
-            <li><a href="#servicos">Serviços</a></li>
-            <li><a href="#contato">Contato</a></li>
-          </ul>
-        </div>
-        <div class="footer__col">
-          <h2>Redes</h2>
-          <ul>
-            <li><a href="#" rel="noopener" aria-label="Instagram da RVR Projetos">Instagram</a></li>
-            <li><a href="#" rel="noopener" aria-label="LinkedIn da RVR Projetos">LinkedIn</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <p class="footer__bottom">© 2026 RVR Projetos. Todos os direitos reservados.</p>
-    </div>
-  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <script>
-    (function () {
-      'use strict';
+    gsap.registerPlugin(ScrollTrigger);
 
-      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // =====================================
+    // SISTEMA DO CURSOR COORDENADO
+    // =====================================
+    const cursor = document.getElementById("cursor");
+    const cursorText = document.getElementById("cursorText");
 
-      // ---------- HERO VIDEO: SCROLL-SCRUBBED + DOCK + END-FREEZE ----------
-      // The video does NOT autoplay. Its currentTime is bound to the scroll
-      // position so the user controls playback. After ~3s, the video docks
-      // to the right (CSS transforms via rAF). When the timeline ends, the
-      // is-fixed class is removed and the video settles into normal flow.
-      var heroVideo = document.getElementById('heroVideo');
-      var scrubHero = document.getElementById('scrubHero');
-      var contentZone = document.getElementById('contentZone');
-      var videoLand = document.getElementById('videoLand');
-      var videoReady = false;
-      var videoDuration = 0;
-      var ticking = false;
-      var resizePending = false;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let isHovering = false;
 
-      // Target moment when the dock animation begins, in seconds of video.
-      var DOCK_AT_SECONDS = 3;
-      // How much extra scroll (relative to total scrub length) the dock
-      // animation spans. Smaller = snappier transition; larger = slower.
-      var DOCK_SCROLL_FRACTION = 0.05;
-      // Final thumbnail size (proportional to viewport)
-      var THUMB_SCALE = 0.50;
-      // Pixel inset of the thumbnail from the right edge
-      var THUMB_RIGHT_INSET = 32;
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      gsap.to(cursor, { x: mouseX, y: mouseY, duration: 0.12, ease: "power2.out" });
+    });
 
-      function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
-      function easeInOut(t) {
-        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      }
+    const resetCursor = () => {
+      isHovering = false;
+      gsap.to(cursor, { width: 10, height: 10, backgroundColor: "#1A1A1A", mixBlendMode: "difference", duration: 0.3 });
+      gsap.to(cursorText, { opacity: 0, duration: 0.1 });
+    };
 
-      // Calibrate the scrub-hero scroll length so that the dock animation
-      // completes exactly when the content-zone begins (no content visible
-      // during the fullscreen → thumbnail transition).
-      function calibrate() {
-        if (!videoReady || videoDuration <= 0) return;
-        if (!scrubHero || !contentZone) return;
-        // Skip calibration on mobile (simpler layout, no dock)
-        if (window.innerWidth < 1024) {
-          scrubHero.style.height = '100vh';
-          return;
-        }
-        var contentH = contentZone.offsetHeight;
-        // Progress at which the dock animation ends
-        var dockEndProgress = Math.min(0.95, DOCK_AT_SECONDS / videoDuration + DOCK_SCROLL_FRACTION);
-        // scrubHero / (scrubHero + contentH) = dockEndProgress
-        //   →  scrubHero = dockEndProgress * contentH / (1 - dockEndProgress)
-        var scrubHeroH = (dockEndProgress * contentH) / (1 - dockEndProgress);
-        // Clamp to a reasonable minimum so it never collapses
-        scrubHeroH = Math.max(scrubHeroH, window.innerHeight * 1.5);
-        scrubHero.style.height = Math.round(scrubHeroH) + 'px';
-      }
-
-      if (heroVideo) {
-        heroVideo.addEventListener('loadedmetadata', function () {
-          videoReady = true;
-          videoDuration = heroVideo.duration || 0;
-          try { heroVideo.pause(); } catch (e) {}
-          calibrate();
-          schedule();
-        });
-        heroVideo.load();
-      }
-
-      function update() {
-        ticking = false;
-        if (!heroVideo) return;
-
-        var isMobile = window.innerWidth < 1024;
-        var y = window.scrollY || window.pageYOffset || 0;
-
-        // The scrub region spans from y=0 to the top of videoLand.
-        var scrubEnd = videoLand ? videoLand.offsetTop : (window.innerHeight * 4);
-        var progress = clamp01(y / Math.max(1, scrubEnd));
-
-        // FREEZE PHASE — past the scrub region: release fixed positioning,
-        // pin the video at its last frame, let it scroll with the page.
-        if (progress >= 1) {
-          if (heroVideo.classList.contains('is-fixed')) {
-            heroVideo.classList.remove('is-fixed');
-            heroVideo.style.transform = '';
-          }
-          if (videoReady && videoDuration > 0) {
-            var lastFrame = Math.max(0, videoDuration - 0.04);
-            if (heroVideo.currentTime < lastFrame) {
-              try { heroVideo.currentTime = lastFrame; } catch (e) {}
-            }
-          }
-          return;
-        }
-
-        // ACTIVE PHASE — pin to viewport, scrub video time, animate transform.
-        if (!heroVideo.classList.contains('is-fixed')) {
-          heroVideo.classList.add('is-fixed');
-        }
-
-        // Map scroll progress to video time.
-        if (videoReady && videoDuration > 0) {
-          var targetTime = videoDuration * progress;
-          // Avoid redundant assignments (browsers throttle currentTime).
-          if (Math.abs(heroVideo.currentTime - targetTime) > 0.016) {
-            try { heroVideo.currentTime = targetTime; } catch (e) {}
-          }
-        }
-
-        // Dock transform: 0 = fullscreen, 1 = right-side thumbnail.
-        if (isMobile) {
-          heroVideo.style.transform = '';
-          return;
-        }
-        var dockStart = (videoReady && videoDuration > 0)
-          ? Math.min(0.9, DOCK_AT_SECONDS / videoDuration)
-          : 0.35;
-        var dockEnd = Math.min(0.95, dockStart + DOCK_SCROLL_FRACTION);
-        var dockT = clamp01((progress - dockStart) / Math.max(0.0001, dockEnd - dockStart));
-        var eased = easeInOut(dockT);
-        var scale = 1 - (1 - THUMB_SCALE) * eased;
-        var tx = -THUMB_RIGHT_INSET * eased;
-        heroVideo.style.transform = 'translate3d(' + tx + 'px, 0, 0) scale(' + scale + ')';
-      }
-
-      function schedule() {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-      }
-      window.addEventListener('scroll', schedule, { passive: true });
-      window.addEventListener('resize', function () {
-        if (resizePending) return;
-        resizePending = true;
-        requestAnimationFrame(function () {
-          resizePending = false;
-          calibrate();
-          schedule();
-        });
-      }, { passive: true });
-      schedule();
-
-      // ---------- HEADER (fade out on scroll past viewport top) ----------
-      var header = document.getElementById('siteHeader');
-      var lastY = 0;
-
-      function onScroll() {
-        var y = window.scrollY || window.pageYOffset;
-
-        if (y > 80) {
-          header.classList.add('is-hidden');
-        } else {
-          header.classList.remove('is-hidden');
-        }
-        lastY = y;
-      }
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-
-      // ---------- HEADER: submenu (desktop) ----------
-      var servicosToggle = document.getElementById('servicosToggle');
-      var servicosMenu = document.getElementById('servicosMenu');
-      servicosToggle.addEventListener('click', function () {
-        var open = servicosMenu.classList.toggle('is-open');
-        servicosToggle.setAttribute('aria-expanded', String(open));
+    document.querySelectorAll("[data-cursor]").forEach((el) => {
+      el.addEventListener("mouseenter", () => {
+        isHovering = true;
+        cursorText.innerText = el.getAttribute("data-cursor");
+        gsap.to(cursor, { width: 90, height: 90, backgroundColor: "rgba(250, 250, 249, 0.95)", mixBlendMode: "normal", duration: 0.3 });
+        gsap.to(cursorText, { opacity: 1, duration: 0.2, delay: 0.05 });
       });
-      document.addEventListener('click', function (e) {
-        if (!servicosToggle.contains(e.target) && !servicosMenu.contains(e.target)) {
-          servicosMenu.classList.remove('is-open');
-          servicosToggle.setAttribute('aria-expanded', 'false');
+      el.addEventListener("mouseleave", resetCursor);
+    });
+
+    window.addEventListener("scroll", () => {
+      if (isHovering) {
+        const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+        if (!elementUnderMouse || !elementUnderMouse.closest("[data-cursor]")) {
+          resetCursor();
         }
+      }
+    }, { passive: true });
+
+    // =====================================
+    // PRELOADER INTEGRAÇÃO DE VÍDEO
+    // =====================================
+    const videoElement = document.getElementById('mainVideo');
+    let siteLoaded = false;
+
+    const startExperience = () => {
+      if (siteLoaded) return;
+      siteLoaded = true;
+
+      const tlLoader = gsap.timeline();
+      tlLoader.to(".preloader-logo", { letterSpacing: "0.15em", opacity: 1, duration: 0.8, ease: "power2.out" })
+              .to("#preloader", { yPercent: -100, duration: 1.2, ease: "expo.inOut" })
+              .set("#preloader", { display: "none" })
+              .set("#mainContent", { visibility: "visible" })
+              .fromTo("#mainContent", { opacity: 0 }, { opacity: 1, duration: 0.5 }, "-=0.4")
+              .add(initAnimations);
+    };
+
+    if (videoElement.readyState >= 3) {
+      startExperience();
+    } else {
+      videoElement.addEventListener('canplaythrough', startExperience);
+      setTimeout(startExperience, 4000); // Força a inicialização caso o vídeo demore
+    }
+
+    // =====================================
+    // COREOGRAFIA DO SCROLL (GSAP DOCKING)
+    // =====================================
+    function initAnimations() {
+
+      // Encolhimento lateral do vídeo à direita estilo Apple/Zara
+      gsap.to("#heroVideo", {
+        scrollTrigger: {
+          trigger: "#heroSection",
+          start: "top top",
+          end: "+=1200",
+          scrub: 1,
+          pin: true,
+        },
+        width: "50vw",
+        height: "70vh",
+        top: "15vh",
+        right: "3vw",
+        borderRadius: "4px",
+        ease: "power2.inOut"
       });
 
-      // ---------- HEADER: mobile menu ----------
-      var mobileToggle = document.getElementById('mobileToggle');
-      var mobileMenu = document.getElementById('mobileMenu');
-      mobileToggle.addEventListener('click', function () {
-        var open = mobileMenu.classList.toggle('is-open');
-        mobileToggle.setAttribute('aria-expanded', String(open));
-        mobileToggle.textContent = open ? 'Fechar' : 'Menu';
-        if (open) { mobileMenu.removeAttribute('hidden'); }
-        else { mobileMenu.setAttribute('hidden', ''); }
-      });
-      mobileMenu.querySelectorAll('[data-nav-close]').forEach(function (a) {
-        a.addEventListener('click', function () {
-          mobileMenu.classList.remove('is-open');
-          mobileMenu.setAttribute('hidden', '');
-          mobileToggle.setAttribute('aria-expanded', 'false');
-          mobileToggle.textContent = 'Menu';
-        });
-      });
-
-      // ---------- GALERIA: slider per card ----------
-      var stepLabels = ['Render', 'Planta baixa', 'Planta estrutural', 'Planta elétrica', 'Planta hidráulica', 'Planta de esgoto'];
-
-      document.querySelectorAll('[data-project]').forEach(function (card) {
-        var slider = card.querySelector('[data-slider]');
-        var slides = slider.querySelectorAll('.gallery__slide');
-        var current = slider.querySelector('[data-current]');
-        var total = slider.querySelector('[data-total]');
-        var prevBtn = slider.querySelector('[data-prev]');
-        var nextBtn = slider.querySelector('[data-next]');
-        var stepLabelEl = card.querySelector('[data-step-label]');
-        var index = 0;
-        total.textContent = String(slides.length);
-
-        function go(to) {
-          index = (to + slides.length) % slides.length;
-          slides.forEach(function (s, i) { s.classList.toggle('is-active', i === index); });
-          current.textContent = String(index + 1);
-          if (stepLabelEl) stepLabelEl.textContent = stepLabels[index] || '';
+      // Entrada suave da tipografia monumental à esquerda
+      gsap.fromTo("#heroText",
+        { opacity: 0, x: -40 },
+        {
+          scrollTrigger: {
+            trigger: "#heroSection",
+            start: "top -100",
+            end: "top -400",
+            scrub: true,
+          },
+          opacity: 1,
+          x: 0,
+          ease: "power1.out"
         }
+      );
 
-        prevBtn.addEventListener('click', function () { go(index - 1); });
-        nextBtn.addEventListener('click', function () { go(index + 1); });
-
-        // Keyboard nav within slider
-        slider.setAttribute('tabindex', '0');
-        slider.setAttribute('role', 'group');
-        slider.setAttribute('aria-roledescription', 'carrossel de plantas');
-        slider.addEventListener('keydown', function (e) {
-          if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
-          else if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); }
-        });
-
-        // Touch swipe
-        var startX = 0;
-        slider.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
-        slider.addEventListener('touchend', function (e) {
-          var dx = e.changedTouches[0].clientX - startX;
-          if (Math.abs(dx) > 40) go(dx < 0 ? index + 1 : index - 1);
+      // Fade in suave nos itens da galeria durante a rolagem comum
+      document.querySelectorAll(".gallery-item").forEach((item) => {
+        gsap.from(item, {
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            toggleActions: "play none none none"
+          },
+          opacity: 0,
+          y: 40,
+          duration: 1,
+          ease: "power2.out"
         });
       });
-
-      // ---------- REVEAL ON SCROLL ----------
-      var revealEls = document.querySelectorAll('.reveal');
-      if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              io.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.05, rootMargin: '0px 0px -10% 0px' });
-        revealEls.forEach(function (el) { io.observe(el); });
-        // Safety fallback: ensure everything reveals within 4s no matter what
-        setTimeout(function () {
-          revealEls.forEach(function (el) { el.classList.add('is-visible'); });
-        }, 4000);
-      } else {
-        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
-      }
-
-      // ---------- COUNTERS ----------
-      function animateCounter(el) {
-        var target = parseInt(el.getAttribute('data-target'), 10) || 0;
-        var suffix = el.getAttribute('data-suffix') || '';
-        if (reduceMotion) { el.textContent = target + suffix; return; }
-        var duration = 2000;
-        var start = performance.now();
-        function tick(now) {
-          var t = Math.min(1, (now - start) / duration);
-          // ease-in-out cubic-bezier approximation
-          var eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-          var value = Math.round(target * eased);
-          el.textContent = value + suffix;
-          if (t < 1) requestAnimationFrame(tick);
-          else el.textContent = target + suffix;
-        }
-        requestAnimationFrame(tick);
-      }
-
-      if ('IntersectionObserver' in window) {
-        var counterIO = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              animateCounter(entry.target);
-              counterIO.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.5 });
-        document.querySelectorAll('[data-counter]').forEach(function (el) { counterIO.observe(el); });
-      } else {
-        document.querySelectorAll('[data-counter]').forEach(animateCounter);
-      }
-    })();
+    }
   </script>
 </body>
 </html>
