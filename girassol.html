@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Serviços Girassol — Cocalzinho de Goiás</title>
+  <meta name="description" content="Uma nova peça de infraestrutura para o corredor econômico que está se formando ao redor de Brasília." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #0c0c0b;
+      --charcoal: #1a1a1a;
+      --concrete: #8a8a82;
+      --concrete-light: #b9b7b2;
+      --sand: #e7e3da;
+      --offwhite: #f4f1ea;
+      --white: #ffffff;
+      --red: #c81e1e;
+      --font-serif: 'Playfair Display', serif;
+      --font-sans: 'Inter', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 0; background: transparent; }
+
+    section, footer {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6vh 6vw;
+    }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--concrete);
+      margin-bottom: 2rem;
+    }
+    .eyebrow.red { color: var(--red); }
+
+    .statement {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(1.9rem, 5vw, 4.2rem);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      max-width: 16ch;
+    }
+    .statement.small { font-size: clamp(1.5rem, 3.4vw, 2.6rem); max-width: 26ch; }
+    .sub {
+      margin-top: 1.75rem;
+      font-family: var(--font-sans);
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+      color: var(--concrete-light);
+      max-width: 40ch;
+    }
+    .rule {
+      width: 46px; height: 2px; background: var(--red);
+      margin-top: 2.75rem;
+      opacity: 0;
+    }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1.1s ease, transform 1.1s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: .15s; }
+    .reveal.d2 { transition-delay: .3s; }
+
+    /* dark section */
+    .sec-dark { background: var(--black); }
+    /* light section */
+    .sec-light { background: var(--offwhite); color: var(--charcoal); }
+    .sec-light .eyebrow { color: #9a968c; }
+
+    /* ---- fact grid (Ato 2) ---- */
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 3.5rem 3rem;
+      max-width: 980px;
+      margin-top: 3rem;
+      text-align: left;
+    }
+    .fact-item { border-left: 2px solid var(--red); padding-left: 1.25rem; }
+    .fact-item p { font-size: clamp(1.05rem, 1.6vw, 1.3rem); font-weight: 300; line-height: 1.4; }
+
+    /* ---- map / full-bleed image sections ---- */
+    .bleed {
+      position: relative;
+      width: 100%; min-height: 100vh;
+      display: flex; align-items: flex-end; justify-content: flex-start;
+      background-size: cover; background-position: center;
+      padding: 0;
+    }
+    .bleed .bleed-caption {
+      position: relative; z-index: 2;
+      padding: 5vh 6vw; width: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+    }
+    .bleed .bleed-caption .tag { font-size: 0.7rem; letter-spacing: 0.3em; color: var(--red); text-transform: uppercase; }
+    .bleed .bleed-caption h3 { font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.3rem, 2.4vw, 2rem); margin-top: 0.6rem; }
+
+    /* ---- Cocalzinho facts (Ato 4) ---- */
+    .city-name { font-family: var(--font-serif); font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 400; }
+    .city-tag { color: var(--red); font-style: italic; margin-top: 0.75rem; font-size: clamp(1rem, 1.4vw, 1.2rem); }
+    .fact-list { margin-top: 3rem; text-align: left; max-width: 640px; }
+    .fact-list li { list-style: none; display: flex; gap: 1rem; align-items: baseline; padding: 0.85rem 0; border-bottom: 1px solid #2a2a28; font-weight: 300; font-size: clamp(0.95rem, 1.3vw, 1.15rem); color: var(--concrete-light); }
+    .fact-list li::before { content: ""; width: 8px; height: 8px; background: var(--red); flex: none; }
+
+    /* ---- reveal (Ato 6) ---- */
+    .reveal-title {
+      position: relative; z-index: 2;
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    /* ---- category grid (Ato 7) ---- */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 2.5rem;
+      max-width: 980px;
+      margin-top: 3.5rem;
+    }
+    .cat-item { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; }
+    .cat-circle {
+      width: 78px; height: 78px; border-radius: 50%;
+      border: 1.5px solid var(--red);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cat-circle img { width: 32px; height: 32px; }
+    .cat-item span { font-size: 0.85rem; letter-spacing: 0.03em; font-weight: 500; }
+
+    /* ---- impact grid (Ato 8) ---- */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 3rem 2.5rem;
+      max-width: 980px;
+      margin-top: 3rem;
+      text-align: left;
+    }
+    .impact-item p { font-size: clamp(1rem, 1.4vw, 1.2rem); font-weight: 300; line-height: 1.4; }
+    .impact-item .num { font-family: var(--font-serif); font-size: 1.6rem; color: var(--red); display: block; margin-bottom: 0.5rem; }
+
+    /* ---- partnership columns (Ato 9) ---- */
+    .partner-cols {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;
+      max-width: 980px; width: 100%; margin-top: 3rem; text-align: left;
+    }
+    @media (max-width: 720px) { .partner-cols { grid-template-columns: 1fr; } }
+    .partner-col { padding: 2.25rem 2rem; }
+    .partner-col.muni { background: var(--white); color: var(--charcoal); border: 1px solid #ddd8cc; }
+    .partner-col.priv { background: var(--charcoal); color: var(--white); }
+    .partner-col h4 { font-size: 0.75rem; letter-spacing: 0.25em; color: var(--red); margin-bottom: 1.4rem; }
+    .partner-col ul { list-style: none; }
+    .partner-col li { padding: 0.55rem 0; font-weight: 300; font-size: 0.98rem; }
+
+    /* ---- steps (Ato 9b) ---- */
+    .steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 2.5rem; max-width: 900px; margin-top: 3rem; }
+    .step { width: 170px; text-align: center; }
+    .step .n { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--red); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-family: var(--font-serif); color: var(--red); }
+    .step p { font-size: 0.85rem; color: var(--concrete-light); font-weight: 300; }
+
+    footer.closing {
+      background: var(--black);
+      padding-bottom: 4vh;
+    }
+    .footer-mark { font-size: 0.65rem; letter-spacing: 0.3em; color: var(--concrete); margin-top: 4rem; text-transform: uppercase; }
+
+    a.cta {
+      display: inline-block; margin-top: 3rem;
+      font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      border-bottom: 1px solid var(--red); padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COLD OPEN -->
+  <section class="sec-dark">
+    <p class="eyebrow reveal">Centro de Serviços Girassol</p>
+    <p class="statement reveal d1" style="font-style:italic; font-size:clamp(1.3rem,2.6vw,1.9rem); color:var(--concrete-light);">Cocalzinho de Goiás</p>
+  </section>
+
+  <!-- ATO 1 — O FUTURO -->
+  <section class="sec-dark">
+    <p class="statement reveal">O mundo está mudando.</p>
+  </section>
+  <section class="sec-dark">
+    <p class="statement reveal">O Entorno de Brasília está mudando.</p>
+  </section>
+  <section class="sec-dark">
+    <p class="statement reveal">O Centro-Oeste está entrando em uma nova fase.</p>
+  </section>
+
+  <!-- ATO 2 — A OPORTUNIDADE -->
+  <section class="sec-dark">
+    <p class="eyebrow reveal red">A Oportunidade</p>
+    <p class="statement reveal d1">Um novo corredor econômico está se formando ao redor de Brasília.</p>
+    <div class="fact-grid">
+      <div class="fact-item reveal"><p>Novo aeroporto em estudo para Águas Lindas de Goiás</p></div>
+      <div class="fact-item reveal d1"><p>Expansão de polos industriais no Entorno do DF</p></div>
+      <div class="fact-item reveal d2"><p>Investimentos internacionais mirando a cadeia logística do Centro-Oeste</p></div>
+      <div class="fact-item reveal"><p>A BR-070 como eixo entre Brasília, o Centro-Oeste e o Mato Grosso</p></div>
+    </div>
+  </section>
+
+  <!-- ATO 3 — A PERGUNTA -->
+  <section class="sec-dark">
+    <p class="eyebrow reveal">A pergunta</p>
+    <p class="statement reveal d1">Quem estará preparado?</p>
+  </section>
+
+  <!-- ATO 4 — COCALZINHO -->
+  <section class="bleed" style="background-image: linear-gradient(rgba(12,12,11,0.35), rgba(12,12,11,0.35)), url('assets/girassol/renders/corridor-map.png');">
+    <div class="bleed-caption">
+      <span class="tag">Esquema ilustrativo — sem escala</span>
+      <h3>Cocalzinho, sobre o corredor da BR-070</h3>
+    </div>
+  </section>
+  <section class="sec-dark">
+    <p class="city-name reveal">Cocalzinho de Goiás</p>
+    <p class="city-tag reveal d1">Na rota — não à margem dela.</p>
+    <ul class="fact-list reveal d2">
+      <li>Sobre a BR-070, entre Ceilândia e o interior de Goiás</li>
+      <li>Passagem diária de famílias, produtores rurais e transportadoras</li>
+      <li>Ponto de conexão entre Brasília e o Centro-Oeste produtivo</li>
+    </ul>
+  </section>
+
+  <!-- ATO 5 — O PROBLEMA -->
+  <section class="sec-dark">
+    <p class="eyebrow reveal">Um contexto observado</p>
+    <p class="statement reveal d1">Toda rodovia estratégica precisa de infraestrutura de apoio.</p>
+  </section>
+  <section class="sec-dark">
+    <p class="statement small reveal">Hoje, entre Ceilândia e Cocalzinho, existem poucas estruturas preparadas para atender esse fluxo crescente.</p>
+    <p class="sub reveal d1">Poucos pontos de parada seguros. Pouco apoio para veículos de grande porte. Pouca estrutura para quem viaja em família.</p>
+  </section>
+
+  <!-- ATO 6 — A REVELAÇÃO -->
+  <section class="bleed" style="background-image: linear-gradient(rgba(0,0,0,0.62), rgba(0,0,0,0.72)), url('assets/girassol/renders/reveal-placeholder.png'); align-items:center; justify-content:center;">
+    <p class="reveal-title reveal">CENTRO DE SERVIÇOS<br>GIRASSOL</p>
+  </section>
+
+  <!-- ATO 7 — A SOLUÇÃO -->
+  <section class="sec-light">
+    <p class="statement reveal" style="color:var(--charcoal)">Não é um posto de combustíveis.</p>
+    <p class="sub reveal d1" style="color:var(--red); font-style:italic;">É um equipamento urbano de apoio à mobilidade regional.</p>
+  </section>
+
+  <section class="sec-light">
+    <p class="eyebrow reveal">Para quem essa estrutura existe</p>
+    <div class="cat-grid">
+      <div class="cat-item reveal"><div class="cat-circle"><img src="assets/girassol/icons/truck.png" alt=""></div><span>Transportadores</span></div>
+      <div class="cat-item reveal d1"><div class="cat-circle"><img src="assets/girassol/icons/wheat.png" alt=""></div><span>Agronegócio</span></div>
+      <div class="cat-item reveal d2"><div class="cat-circle"><img src="assets/girassol/icons/users.png" alt=""></div><span>Famílias</span></div>
+      <div class="cat-item reveal"><div class="cat-circle"><img src="assets/girassol/icons/layers.png" alt=""></div><span>Logística</span></div>
+      <div class="cat-item reveal d1"><div class="cat-circle"><img src="assets/girassol/icons/home.png" alt=""></div><span>Serviços</span></div>
+      <div class="cat-item reveal d2"><div class="cat-circle"><img src="assets/girassol/icons/shield.png" alt=""></div><span>Segurança</span></div>
+      <div class="cat-item reveal"><div class="cat-circle"><img src="assets/girassol/icons/trend.png" alt=""></div><span>Economia local</span></div>
+      <div class="cat-item reveal d1"><div class="cat-circle"><img src="assets/girassol/icons/compass.png" alt=""></div><span>Integração regional</span></div>
+    </div>
+  </section>
+
+  <section class="bleed" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05) 40%), url('assets/girassol/renders/render-placeholder-01.png');">
+    <div class="bleed-caption"><span class="tag">Render 01</span><h3>Vista aérea — chegada e cobertura principal</h3></div>
+  </section>
+  <section class="bleed" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05) 40%), url('assets/girassol/renders/render-placeholder-02.png');">
+    <div class="bleed-caption"><span class="tag">Render 02</span><h3>Área de apoio a caminhões e paisagismo</h3></div>
+  </section>
+  <section class="bleed" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05) 40%), url('assets/girassol/renders/render-placeholder-03.png');">
+    <div class="bleed-caption"><span class="tag">Render 03</span><h3>Circulação, acessos e organização do pátio</h3></div>
+  </section>
+  <section class="bleed" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05) 40%), url('assets/girassol/renders/render-placeholder-04.png');">
+    <div class="bleed-caption"><span class="tag">Render 04</span><h3>Vista geral — integração com a paisagem</h3></div>
+  </section>
+
+  <!-- ATO 8 — IMPACTOS -->
+  <section class="sec-dark">
+    <p class="statement reveal">O que isso significa para Cocalzinho</p>
+  </section>
+  <section class="sec-light">
+    <div class="impact-grid">
+      <div class="impact-item reveal"><span class="num">01</span><p>Geração de empregos diretos e indiretos</p></div>
+      <div class="impact-item reveal d1"><span class="num">02</span><p>Novo fluxo de arrecadação municipal</p></div>
+      <div class="impact-item reveal d2"><span class="num">03</span><p>Movimento econômico local</p></div>
+      <div class="impact-item reveal"><span class="num">04</span><p>Valorização da região ao longo da BR-070</p></div>
+      <div class="impact-item reveal d1"><span class="num">05</span><p>Apoio direto ao escoamento do agronegócio</p></div>
+      <div class="impact-item reveal d2"><span class="num">06</span><p>Integração logística regional</p></div>
+    </div>
+  </section>
+
+  <!-- ATO 9 — A PARCERIA -->
+  <section class="sec-dark">
+    <p class="statement reveal">Parceria Institucional</p>
+  </section>
+  <section class="sec-light">
+    <p class="eyebrow reveal">Como a parceria se organiza</p>
+    <div class="partner-cols">
+      <div class="partner-col muni reveal">
+        <h4>MUNICÍPIO</h4>
+        <ul>
+          <li>— Apoio institucional ao projeto</li>
+          <li>— Movimentação de solo</li>
+          <li>— Relocação de dois postes</li>
+        </ul>
+      </div>
+      <div class="partner-col priv reveal d1">
+        <h4>INICIATIVA PRIVADA</h4>
+        <ul>
+          <li>— Projeto técnico completo</li>
+          <li>— Execução integral da obra</li>
+          <li>— Operação da estrutura</li>
+          <li>— Investimento total do empreendimento</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section class="sec-dark">
+    <p class="statement small reveal">Próximos Passos</p>
+    <div class="steps">
+      <div class="step reveal"><div class="n">1</div><p>Alinhamento técnico entre as equipes</p></div>
+      <div class="step reveal d1"><div class="n">2</div><p>Visita conjunta ao terreno</p></div>
+      <div class="step reveal d2"><div class="n">3</div><p>Formalização da parceria institucional</p></div>
+      <div class="step reveal"><div class="n">4</div><p>Início das obras</p></div>
+    </div>
+  </section>
+
+  <!-- ATO 10 — O LEGADO -->
+  <section class="bleed" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('assets/girassol/renders/legacy-placeholder.png'); align-items:center; justify-content:center; text-align:left;">
+    <p class="statement reveal" style="font-style:italic; text-align:left; max-width:22ch;">“As grandes cidades não crescem por acaso. Elas crescem porque alguém decidiu acreditar antes dos outros.”</p>
+  </section>
+
+  <section class="sec-dark">
+    <p class="statement reveal">O futuro não espera.<br>Apenas recompensa quem se prepara para ele.</p>
+  </section>
+
+  <section class="sec-dark">
+    <p class="city-name reveal">Cocalzinho de Goiás.</p>
+    <p class="city-tag reveal d1">Pronta para o que vem a seguir.</p>
+  </section>
+
+  <footer class="closing sec-dark">
+    <p class="eyebrow reveal">Centro de Serviços Girassol</p>
+    <p class="statement small reveal d1">Obrigado.</p>
+    <a href="assets/girassol/Centro-de-Servicos-Girassol-Cocalzinho.pptx" class="cta reveal d2">Baixar apresentação completa ↗</a>
+    <p class="footer-mark">Cocalzinho de Goiás · Parceria Institucional</p>
+  </footer>
+
+  <script>
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.35 });
+    els.forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>
